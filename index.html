@@ -695,7 +695,7 @@
       border-radius: 20px;
       padding: 30px;
       width: 90%;
-      max-width: 500px;
+      max-width: 600px;
       max-height: 90vh;
       overflow-y: auto;
       box-shadow: var(--shadow);
@@ -838,6 +838,16 @@
       background: rgba(46, 125, 50, 0.3);
     }
 
+    .edit-model-btn {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffd54f;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .edit-model-btn:hover {
+      background: rgba(255, 193, 7, 0.3);
+    }
+
     .model-options {
       display: flex;
       flex-direction: column;
@@ -936,6 +946,27 @@
       margin-left: 8px;
     }
 
+    .model-actions {
+      display: flex;
+      gap: 5px;
+      margin-left: 8px;
+    }
+
+    .edit-model-btn-small {
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .edit-model-btn-small:hover {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffd54f;
+    }
+
     .delete-model-btn {
       background: none;
       border: none;
@@ -944,7 +975,6 @@
       padding: 5px;
       border-radius: 4px;
       transition: all 0.3s ease;
-      margin-left: 8px;
     }
 
     .delete-model-btn:hover {
@@ -969,6 +999,34 @@
     .current-model-value {
       font-weight: 600;
       color: var(--light);
+    }
+
+    /* Styles pour le popup d'édition */
+    .edit-model-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .edit-model-popup {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+      animation: popupAppear 0.4s ease-out;
     }
 
     @media (max-width: 768px) {
@@ -1112,6 +1170,60 @@
       </div>
     </div>
   </div>
+
+  <!-- Popup d'édition de modèle -->
+  <div class="edit-model-overlay" id="editModelOverlay">
+    <div class="edit-model-popup">
+      <div class="settings-header">
+        <div class="settings-title">
+          <i class="fas fa-edit"></i>
+          Modifier le modèle
+        </div>
+        <button class="close-btn" onclick="closeEditModel()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label for="editModelId">ID du modèle</label>
+        <input type="text" id="editModelId" />
+      </div>
+      
+      <div class="form-group">
+        <label for="editModelName">Nom du modèle</label>
+        <input type="text" id="editModelName" />
+      </div>
+      
+      <div class="form-group">
+        <label for="editModelProvider">Fournisseur</label>
+        <input type="text" id="editModelProvider" />
+      </div>
+      
+      <div class="form-group">
+        <label for="editModelType">Type</label>
+        <select id="editModelType">
+          <option value="gratuit">Gratuit</option>
+          <option value="payant">Payant</option>
+          <option value="preview">Preview</option>
+          <option value="personnalisé">Personnalisé</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="editModelDescription">Description</label>
+        <textarea id="editModelDescription"></textarea>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="export-btn" onclick="saveModelEdit()" style="flex: 1;">
+          <i class="fas fa-save"></i> Sauvegarder
+        </button>
+        <button class="export-btn" onclick="closeEditModel()" style="flex: 1; background: rgba(197, 48, 48, 0.2);">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+      </div>
+    </div>
+  </div>
   
   <div class="container">
     <div class="header-section">
@@ -1211,6 +1323,7 @@
 
     let currentRawResponse = "";
     let currentFunction = "risk";
+    let currentEditingModel = null;
 
     // Configuration des modèles d'IA par défaut
     const defaultAiModels = [
@@ -1272,15 +1385,28 @@
       }
     ];
 
-    // Charger les modèles personnalisés depuis le localStorage
-    function getAiModels() {
+    // Charger tous les modèles depuis le localStorage
+    function getAllModels() {
       const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
-      return [...defaultAiModels, ...customModels];
+      const modifiedDefaultModels = JSON.parse(localStorage.getItem('modifiedDefaultModels') || '[]');
+      
+      // Fusionner les modèles modifiés avec les modèles par défaut
+      const defaultModels = defaultAiModels.map(defaultModel => {
+        const modified = modifiedDefaultModels.find(m => m.originalId === defaultModel.id);
+        return modified ? { ...modified, custom: false } : defaultModel;
+      });
+      
+      return [...defaultModels, ...customModels];
     }
 
     // Sauvegarder les modèles personnalisés
     function saveCustomModels(customModels) {
       localStorage.setItem('customAiModels', JSON.stringify(customModels));
+    }
+
+    // Sauvegarder les modèles par défaut modifiés
+    function saveModifiedDefaultModels(modifiedModels) {
+      localStorage.setItem('modifiedDefaultModels', JSON.stringify(modifiedModels));
     }
 
     // Configuration des sections pour l'analyse des risques
@@ -1556,7 +1682,7 @@
       }
     }
 
-    // Fonctions pour gérer les modèles personnalisés
+    // Fonctions pour gérer les modèles
     function addCustomModel() {
       const modelId = document.getElementById('modelIdInput').value.trim();
       
@@ -1609,11 +1735,113 @@
       }, 3000);
     }
 
-    function deleteCustomModel(modelId) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle personnalisé ?')) {
+    function editModel(modelId) {
+      const allModels = getAllModels();
+      const model = allModels.find(m => m.id === modelId);
+      
+      if (!model) return;
+      
+      currentEditingModel = model;
+      
+      // Remplir le formulaire d'édition
+      document.getElementById('editModelId').value = model.id;
+      document.getElementById('editModelName').value = model.name;
+      document.getElementById('editModelProvider').value = model.provider;
+      document.getElementById('editModelType').value = model.type;
+      document.getElementById('editModelDescription').value = model.description;
+      
+      // Afficher le popup d'édition
+      document.getElementById('editModelOverlay').style.display = 'flex';
+    }
+
+    function saveModelEdit() {
+      const modelId = document.getElementById('editModelId').value.trim();
+      const modelName = document.getElementById('editModelName').value.trim();
+      const modelProvider = document.getElementById('editModelProvider').value.trim();
+      const modelType = document.getElementById('editModelType').value;
+      const modelDescription = document.getElementById('editModelDescription').value.trim();
+      
+      if (!modelId || !modelName || !modelProvider) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+      
+      const updatedModel = {
+        id: modelId,
+        name: modelName,
+        provider: modelProvider,
+        type: modelType,
+        description: modelDescription,
+        custom: currentEditingModel.custom
+      };
+      
+      if (currentEditingModel.custom) {
+        // Modifier un modèle personnalisé
         const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
-        const updatedModels = customModels.filter(model => model.id !== modelId);
-        saveCustomModels(updatedModels);
+        const updatedCustomModels = customModels.map(model => 
+          model.id === currentEditingModel.id ? updatedModel : model
+        );
+        saveCustomModels(updatedCustomModels);
+      } else {
+        // Modifier un modèle par défaut
+        const modifiedDefaultModels = JSON.parse(localStorage.getItem('modifiedDefaultModels') || '[]');
+        const existingModificationIndex = modifiedDefaultModels.findIndex(m => m.originalId === currentEditingModel.id);
+        
+        if (existingModificationIndex !== -1) {
+          modifiedDefaultModels[existingModificationIndex] = {
+            ...updatedModel,
+            originalId: currentEditingModel.id
+          };
+        } else {
+          modifiedDefaultModels.push({
+            ...updatedModel,
+            originalId: currentEditingModel.id
+          });
+        }
+        
+        saveModifiedDefaultModels(modifiedDefaultModels);
+      }
+      
+      // Fermer le popup d'édition
+      closeEditModel();
+      
+      // Mettre à jour l'affichage
+      populateModelOptions();
+      
+      // Afficher un message de succès
+      const statusDiv = document.getElementById('apiStatus');
+      statusDiv.className = 'api-status success';
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Modèle modifié avec succès !';
+      
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    function closeEditModel() {
+      document.getElementById('editModelOverlay').style.display = 'none';
+      currentEditingModel = null;
+    }
+
+    function deleteModel(modelId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle ?')) {
+        const allModels = getAllModels();
+        const model = allModels.find(m => m.id === modelId);
+        
+        if (!model) return;
+        
+        if (model.custom) {
+          // Supprimer un modèle personnalisé
+          const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
+          const updatedCustomModels = customModels.filter(m => m.id !== modelId);
+          saveCustomModels(updatedCustomModels);
+        } else {
+          // Supprimer la modification d'un modèle par défaut (retour à la version par défaut)
+          const modifiedDefaultModels = JSON.parse(localStorage.getItem('modifiedDefaultModels') || '[]');
+          const updatedModifiedModels = modifiedDefaultModels.filter(m => m.originalId !== modelId);
+          saveModifiedDefaultModels(updatedModifiedModels);
+        }
         
         // Recharger l'affichage
         populateModelOptions();
@@ -1622,7 +1850,7 @@
         const currentModel = getCurrentModel();
         if (currentModel === modelId) {
           // Sélectionner le premier modèle disponible
-          const aiModels = getAiModels();
+          const aiModels = getAllModels();
           if (aiModels.length > 0) {
             selectModel(aiModels[0].id);
           }
@@ -1633,7 +1861,7 @@
     function populateModelOptions() {
       const modelOptions = document.getElementById('modelOptions');
       const currentModel = getCurrentModel();
-      const aiModels = getAiModels();
+      const aiModels = getAllModels();
       
       modelOptions.innerHTML = '';
       
@@ -1654,12 +1882,16 @@
           badge = '<span class="model-preview-badge">PAYANT</span>';
         }
         
-        let deleteButton = '';
-        if (model.custom) {
-          deleteButton = `<button class="delete-model-btn" onclick="event.stopPropagation(); deleteCustomModel('${model.id}')">
-            <i class="fas fa-trash"></i>
-          </button>`;
-        }
+        const actions = `
+          <div class="model-actions">
+            <button class="edit-model-btn-small" onclick="event.stopPropagation(); editModel('${model.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="delete-model-btn" onclick="event.stopPropagation(); deleteModel('${model.id}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
         
         optionElement.innerHTML = `
           <input type="radio" class="model-radio" name="ai-model" ${isSelected ? 'checked' : ''}>
@@ -1667,7 +1899,7 @@
             <div class="model-name">${model.name} • ${model.provider} ${badge}</div>
             <div class="model-details">${model.description}</div>
           </div>
-          ${deleteButton}
+          ${actions}
         `;
         
         modelOptions.appendChild(optionElement);
@@ -1688,7 +1920,7 @@
 
     function updateCurrentModelDisplay() {
       const currentModel = getCurrentModel();
-      const aiModels = getAiModels();
+      const aiModels = getAllModels();
       const model = aiModels.find(m => m.id === currentModel);
       const displayElement = document.getElementById('currentModelDisplay');
       
@@ -1701,17 +1933,24 @@
       }
     }
 
-    // Fermer le popup en cliquant en dehors
+    // Fermer les popups en cliquant en dehors
     document.getElementById('settingsOverlay').addEventListener('click', function(e) {
       if (e.target === this) {
         closeSettings();
       }
     });
 
-    // Fermer le popup avec la touche Échap
+    document.getElementById('editModelOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditModel();
+      }
+    });
+
+    // Fermer les popups avec la touche Échap
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         closeSettings();
+        closeEditModel();
       }
     });
 
