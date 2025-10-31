@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analyse des Risques BTP – Interface Professionnelle</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0f4c75;
+      --primary-light: #3273a8;
+      --secondary: #2e7d32;
+      --accent: #00c6ff;
+      --accent-glow: rgba(0, 198, 255, 0.4);
+      --dark: #0a1a2a;
+      --darker: #06121e;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --inner-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+      
+      --risk-physical: #ff6b6b;
+      --risk-chemical: #4ecdc4;
+      --risk-ergonomic: #ffe66d;
+      --risk-environmental: #45b7d1;
+      --risk-third-party: #96ceb4;
+      --risk-prevention: #6a0572;
+      --risk-description: #9c27b0;
+      --risk-organization: #ff9800;
+      --prevention-identification: #e91e63;
+      --prevention-materials: #2196f3;
+      --prevention-instructions: #4caf50;
+      --prevention-rescue: #ff5722;
+      --prevention-coordination: #9c27b0;
+      --prevention-responsibilities: #607d8b;
+      --prevention-asbestos: #795548;
+      --prevention-description: #2196f3;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 50%, #0f2a42 100%);
+      margin: 0;
+      padding: 20px;
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(15, 76, 117, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(46, 125, 50, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0, 198, 255, 0.1) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+      animation: containerAppear 0.8s ease-out;
+    }
+
+    @keyframes containerAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--primary-light), var(--secondary));
+      animation: borderGlow 3s infinite alternate;
+    }
+
+    @keyframes borderGlow {
+      0% {
+        box-shadow: 0 0 10px var(--accent-glow);
+      }
+      100% {
+        box-shadow: 0 0 20px var(--accent-glow), 0 0 30px rgba(15, 76, 117, 0.4);
+      }
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .settings-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      color: var(--light);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 18px;
+    }
+
+    .settings-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+
+    h1 {
+      color: var(--light);
+      margin-bottom: 12px;
+      font-weight: 700;
+      font-size: 2.5rem;
+      background: linear-gradient(to right, var(--accent), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleGlow 3s infinite alternate;
+    }
+
+    @keyframes titleGlow {
+      0% {
+        text-shadow: 0 0 5px rgba(0, 198, 255, 0.3);
+      }
+      100% {
+        text-shadow: 0 0 15px rgba(0, 198, 255, 0.6);
+      }
+    }
+
+    p.subtitle {
+      color: var(--gray);
+      margin-bottom: 25px;
+      font-size: 16px;
+      animation: fadeIn 1s ease-out 0.2s both;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .function-selector {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .function-btn {
+      flex: 1;
+      padding: 18px 20px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .function-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .function-btn:hover::before {
+      left: 100%;
+    }
+
+    .function-btn.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 4px 15px rgba(15, 76, 117, 0.4);
+    }
+
+    .function-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .input-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .function-selector {
+        flex-direction: column;
+      }
+    }
+
+    .form-group {
+      animation: slideInUp 0.6s ease-out both;
+      position: relative;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--light);
+      font-size: 15px;
+    }
+
+    .label-icon {
+      margin-right: 8px;
+      color: var(--accent);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 15px;
+      color: var(--light);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 25px;
+      animation: fadeIn 0.8s ease-out 0.4s both;
+    }
+
+    .btn {
+      padding: 18px 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      flex: 1;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-analyze {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(15, 76, 117, 0.4);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn:disabled::before {
+      display: none;
+    }
+
+    .export-options {
+      margin-top: 15px;
+      display: none;
+      gap: 10px;
+      justify-content: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .export-btn {
+      padding: 14px 24px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s ease;
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .export-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #preview {
+      margin-top: 30px;
+      display: none;
+      animation: previewAppear 0.5s ease-out;
+    }
+
+    @keyframes previewAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .preview-header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .preview-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--light);
+      margin-bottom: 8px;
+      background: linear-gradient(to right, var(--accent), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .preview-subtitle {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    .risk-section {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      border: 1px solid var(--card-border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .risk-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--section-color, var(--accent));
+    }
+
+    .risk-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .risk-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .risk-icon {
+      width: 55px;
+      height: 55px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 18px;
+      background: var(--section-color, var(--accent));
+      color: white;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .risk-section:hover .risk-icon {
+      transform: scale(1.05);
+    }
+
+    .risk-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--section-color, var(--accent));
+      margin: 0;
+    }
+
+    .risk-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    .risk-content {
+      padding-left: 73px;
+    }
+
+    .sub-risk {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--sub-risk-color, var(--accent));
+      transition: all 0.2s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .sub-risk:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .sub-risk-title {
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      font-size: 17px;
+    }
+
+    .sub-risk-title i {
+      margin-right: 10px;
+      color: var(--sub-risk-color, var(--accent));
+      font-size: 14px;
+    }
+
+    .sub-risk-items {
+      padding-left: 24px;
+    }
+
+    .sub-risk-item {
+      margin-bottom: 8px;
+      position: relative;
+      padding-left: 20px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .sub-risk-item::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--sub-risk-color, var(--accent));
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+      animation: statusPulse 2s infinite;
+      backdrop-filter: blur(10px);
+      border: 1px solid;
+    }
+
+    @keyframes statusPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(46, 125, 50, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(46, 125, 50, 0);
+      }
+    }
+
+    .success {
+      background: rgba(46, 125, 50, 0.15);
+      color: #a5d6a7;
+      border-color: rgba(46, 125, 50, 0.3);
+    }
+
+    .error {
+      background: rgba(197, 48, 48, 0.15);
+      color: #ef9a9a;
+      border-color: rgba(197, 48, 48, 0.3);
+    }
+
+    .floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .floating-element {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 50%;
+      animation: float 15s infinite linear;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+      }
+    }
+
+    .pulse-dot {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 198, 255, 0.7);
+      }
+      70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(0, 198, 255, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(0, 198, 255, 0);
+      }
+    }
+
+    .tech-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(10, 26, 42, 0.8) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10, 26, 42, 0.8) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -2;
+      opacity: 0.3;
+    }
+
+    /* Styles pour le popup de paramètres */
+    .settings-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .settings-popup {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+      animation: popupAppear 0.4s ease-out;
+    }
+
+    @keyframes popupAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .settings-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 24px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+    }
+
+    /* Styles pour la section API Key */
+    .api-key-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .api-status {
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      margin-top: 10px;
+    }
+
+    .api-status.success {
+      background: rgba(46, 125, 50, 0.15);
+      color: #a5d6a7;
+      border: 1px solid rgba(46, 125, 50, 0.3);
+    }
+
+    .api-status.error {
+      background: rgba(197, 48, 48, 0.15);
+      color: #ef9a9a;
+      border: 1px solid rgba(197, 48, 48, 0.3);
+    }
+
+    .api-status.testing {
+      background: rgba(255, 193, 7, 0.15);
+      color: #ffd54f;
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .toggle-password {
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .toggle-password:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+    }
+
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 5px;
+    }
+
+    .char-counter.warning {
+      color: #ff6b6b;
+    }
+
+    /* Styles pour l'ajout de modèles */
+    .add-model-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .add-model-btn {
+      background: rgba(46, 125, 50, 0.2);
+      color: #a5d6a7;
+      border: 1px solid rgba(46, 125, 50, 0.3);
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .add-model-btn:hover {
+      background: rgba(46, 125, 50, 0.3);
+    }
+
+    .model-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .model-options::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .model-options::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+
+    .model-options::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    .model-option {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .model-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent);
+    }
+
+    .model-option.selected {
+      background: rgba(0, 198, 255, 0.1);
+      border-color: var(--accent);
+    }
+
+    .model-radio {
+      margin-right: 12px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .model-info {
+      flex: 1;
+    }
+
+    .model-name {
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 4px;
+    }
+
+    .model-details {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .model-free-badge {
+      background: var(--secondary);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .model-preview-badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .model-custom-badge {
+      background: #9c27b0;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .delete-model-btn {
+      background: none;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      margin-left: 8px;
+    }
+
+    .delete-model-btn:hover {
+      background: rgba(197, 48, 48, 0.2);
+      color: #ef9a9a;
+    }
+
+    .current-model-display {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .current-model-label {
+      font-size: 12px;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+
+    .current-model-value {
+      font-weight: 600;
+      color: var(--light);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .risk-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .risk-icon {
+        margin-bottom: 10px;
+        margin-right: 0;
+      }
+      
+      .risk-content {
+        padding-left: 0;
+      }
+      
+      .settings-popup {
+        margin: 20px;
+        padding: 20px;
+      }
+      
+      .model-options {
+        max-height: 250px;
+      }
+      
+      .api-key-section, .add-model-section {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tech-grid"></div>
+  <div class="floating-elements" id="floatingElements"></div>
+  
+  <!-- Popup de paramètres -->
+  <div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-popup">
+      <div class="settings-header">
+        <div class="settings-title">
+          <i class="fas fa-cog"></i>
+          Paramètres
+        </div>
+        <button class="close-btn" onclick="closeSettings()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <!-- Section API Key -->
+      <div class="api-key-section">
+        <div class="settings-title" style="font-size: 1.2rem; margin-bottom: 15px;">
+          <i class="fas fa-key"></i>
+          Configuration API
+        </div>
+        
+        <div class="form-group">
+          <label for="apiKeyInput">
+            <i class="fas fa-key label-icon"></i>
+            Clé API OpenRouter
+          </label>
+          <div style="position: relative;">
+            <input 
+              type="password" 
+              id="apiKeyInput" 
+              placeholder="Saisissez votre clé API OpenRouter"
+              style="padding-right: 40px;"
+            />
+            <button 
+              type="button" 
+              class="toggle-password" 
+              onclick="toggleApiKeyVisibility()"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="char-counter" id="apiKeyCounter">0 caractères</div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <button class="export-btn" onclick="saveApiKey()" style="flex: 1;">
+            <i class="fas fa-save"></i> Sauvegarder
+          </button>
+          <button class="export-btn" onclick="testApiKey()" style="flex: 1;">
+            <i class="fas fa-vial"></i> Tester
+          </button>
+          <button class="export-btn" onclick="clearApiKey()" style="flex: 1; background: rgba(197, 48, 48, 0.2);">
+            <i class="fas fa-trash"></i> Effacer
+          </button>
+        </div>
+        
+        <div class="api-status" id="apiStatus"></div>
+      </div>
+      
+      <hr style="border: none; height: 1px; background: var(--card-border); margin: 25px 0;">
+      
+      <!-- Section Ajout de Modèles -->
+      <div class="add-model-section">
+        <div class="settings-title" style="font-size: 1.2rem; margin-bottom: 15px;">
+          <i class="fas fa-plus-circle"></i>
+          Ajouter un modèle personnalisé
+        </div>
+        
+        <div class="form-group">
+          <label for="modelIdInput">ID du modèle OpenRouter</label>
+          <input type="text" id="modelIdInput" placeholder="ex: anthropic/claude-3.5-sonnet" />
+        </div>
+        
+        <button class="export-btn add-model-btn" onclick="addCustomModel()">
+          <i class="fas fa-plus"></i> Ajouter le modèle
+        </button>
+      </div>
+      
+      <hr style="border: none; height: 1px; background: var(--card-border); margin: 25px 0;">
+      
+      <!-- Section Modèles -->
+      <div class="settings-title" style="font-size: 1.2rem; margin-bottom: 15px;">
+        <i class="fas fa-brain"></i>
+        Modèles d'IA disponibles
+      </div>
+      
+      <div class="model-options" id="modelOptions">
+        <!-- Les options de modèle seront générées dynamiquement -->
+      </div>
+      
+      <div class="current-model-display">
+        <div class="current-model-label">Modèle actuellement sélectionné :</div>
+        <div class="current-model-value" id="currentModelDisplay">Gemma 3 27B (Google) - gratuit</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="header-section">
+      <button class="settings-btn" onclick="openSettings()">
+        <i class="fas fa-cog"></i>
+      </button>
+      <h1><i class="fas fa-hard-hat"></i> Outils BTP Professionnels</h1>
+      <p class="subtitle">Solutions professionnelles pour l'analyse des risques et les plans de prévention</p>
+    </div>
+
+    <div class="function-selector">
+      <button class="function-btn active" onclick="selectFunction('risk')">
+        <i class="fas fa-search"></i> Analyse des Risques
+      </button>
+      <button class="function-btn" onclick="selectFunction('prevention')">
+        <i class="fas fa-shield-alt"></i> Plan de Prévention
+      </button>
+    </div>
+
+    <div class="input-grid">
+      <div class="form-group">
+        <label for="job"><i class="fas fa-tools label-icon"></i> Métier ou tâche</label>
+        <input type="text" id="job" placeholder="Ex: Démolition de cloison" required />
+      </div>
+
+      <div class="form-group">
+        <label for="location"><i class="fas fa-map-marker-alt label-icon"></i> Lieu spécifique</label>
+        <input type="text" id="location" placeholder="Ex: Appartement ancien, rez-de-chaussée" required />
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1;">
+        <label for="details"><i class="fas fa-info-circle label-icon"></i> Conditions ou précisions (facultatif)</label>
+        <textarea id="details" placeholder="Ex: Présence de poussières, espace confiné, outils manuels, conditions météo..."></textarea>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-analyze" onclick="analyzeWithAI()">
+        <i class="fas fa-search"></i> Analyser les risques
+      </button>
+    </div>
+
+    <div class="export-options" id="exportOptions">
+      <button class="export-btn" onclick="exportAsText()">
+        <i class="fas fa-file-alt"></i> Exporter en .txt
+      </button>
+    </div>
+
+    <div id="status" class="status"></div>
+    
+    <div id="preview">
+      <div class="preview-header">
+        <div class="preview-title" id="previewTitle">Analyse des Risques</div>
+        <div class="preview-subtitle" id="previewSubtitle">Résultat de l'analyse généré automatiquement</div>
+      </div>
+      <div id="previewContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Créer des éléments flottants pour l'arrière-plan
+    function createFloatingElements() {
+      const container = document.getElementById('floatingElements');
+      const colors = ['rgba(0, 198, 255, 0.1)', 'rgba(15, 76, 117, 0.1)', 'rgba(46, 125, 50, 0.1)'];
+      
+      for (let i = 0; i < 20; i++) {
+        const element = document.createElement('div');
+        const size = Math.random() * 100 + 20;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        element.className = 'floating-element';
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        element.style.background = color;
+        element.style.left = `${Math.random() * 100}%`;
+        element.style.top = `${Math.random() * 100 + 100}%`;
+        element.style.animationDuration = `${Math.random() * 20 + 15}s`;
+        element.style.animationDelay = `${Math.random() * 5}s`;
+        
+        container.appendChild(element);
+      }
+      
+      // Ajouter des points pulsants
+      for (let i = 0; i < 10; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'pulse-dot';
+        dot.style.left = `${Math.random() * 100}%`;
+        dot.style.top = `${Math.random() * 100}%`;
+        dot.style.animationDelay = `${Math.random() * 2}s`;
+        container.appendChild(dot);
+      }
+    }
+
+    // Déclaration de l'API_KEY mutable
+    let API_KEY = localStorage.getItem('openRouterApiKey') || "";
+    const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+    let currentRawResponse = "";
+    let currentFunction = "risk";
+
+    // Configuration des modèles d'IA par défaut
+    const defaultAiModels = [
+      {
+        id: 'google/gemma-3-27b-it:free',
+        name: 'Gemma 3 27B',
+        provider: 'Google',
+        type: 'gratuit',
+        description: 'Modèle performant de Google, idéal pour les analyses détaillées',
+        custom: false
+      },
+      {
+        id: 'mistralai/mistral-small-3.2-24b-instruct:free',
+        name: 'Mistral Small 3.2 24B',
+        provider: 'Mistral AI',
+        type: 'gratuit',
+        description: 'Modèle français équilibré entre vitesse et qualité',
+        custom: false
+      },
+      {
+        id: 'openai/gpt-oss-20b:free',
+        name: 'GPT OSS 20B',
+        provider: 'OpenAI',
+        type: 'gratuit',
+        description: 'Version open source de GPT, fiable et rapide',
+        custom: false
+      },
+      {
+        id: 'google/gemini-2.5-flash-lite-preview-06-17',
+        name: 'Gemini 2.5 Flash Lite',
+        provider: 'Google',
+        type: 'preview',
+        description: 'Version preview rapide et efficace',
+        custom: false
+      },
+      {
+        id: 'deepseek/deepseek-r1-0528-qwen3-8b:free',
+        name: 'DeepSeek R1 Qwen3 8B',
+        provider: 'DeepSeek',
+        type: 'gratuit',
+        description: 'Modèle de raisonnement spécialisé pour analyses complexes',
+        custom: false
+      },
+      {
+        id: 'z-ai/glm-4.5-air:free',
+        name: 'GLM 4.5 Air',
+        provider: 'Z-AI',
+        type: 'gratuit',
+        description: 'Modèle léger et efficace pour analyses rapides',
+        custom: false
+      },
+      {
+        id: 'google/gemma-3n-e2b-it:free',
+        name: 'Gemma 3N E2B',
+        provider: 'Google',
+        type: 'gratuit',
+        description: 'Version optimisée pour les tâches professionnelles',
+        custom: false
+      }
+    ];
+
+    // Charger les modèles personnalisés depuis le localStorage
+    function getAiModels() {
+      const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
+      return [...defaultAiModels, ...customModels];
+    }
+
+    // Sauvegarder les modèles personnalisés
+    function saveCustomModels(customModels) {
+      localStorage.setItem('customAiModels', JSON.stringify(customModels));
+    }
+
+    // Configuration des sections pour l'analyse des risques
+    const riskSections = {
+      'Description sommaire des travaux': {
+        icon: 'fas fa-clipboard-list',
+        color: 'var(--risk-description)',
+        subtitle: 'Résumé des éléments renseignés par l\'utilisateur'
+      },
+      'Risques physiques': {
+        icon: 'fas fa-running',
+        color: 'var(--risk-physical)',
+        subtitle: 'Chutes, bruit, fatigue, accidents machines/outils/engins'
+      },
+      'Risques chimiques ou biologiques': {
+        icon: 'fas fa-flask',
+        color: 'var(--risk-chemical)',
+        subtitle: 'Amiante, plomb, poussières, solvants, gaz, moisissures, bactéries'
+      },
+      'Contraintes ergonomiques': {
+        icon: 'fas fa-user-injured',
+        color: 'var(--risk-ergonomic)',
+        subtitle: 'Mauvaises postures, tâches répétitives, charges lourdes, stress'
+      },
+      'Risques environnementaux': {
+        icon: 'fas fa-cloud-showers-heavy',
+        color: 'var(--risk-environmental)',
+        subtitle: 'Pollution, températures extrêmes, climat, réseaux EDF/GAZ'
+      },
+      'Activités des tiers': {
+        icon: 'fas fa-users',
+        color: 'var(--risk-third-party)',
+        subtitle: 'Véhicules, engins, piétons en site occupé'
+      },
+      'Organisation des travaux': {
+        icon: 'fas fa-sitemap',
+        color: 'var(--risk-organization)',
+        subtitle: 'Circulation, signalisation, procédures d\'urgence et premiers secours'
+      },
+      'Mesures de prévention': {
+        icon: 'fas fa-shield-alt',
+        color: 'var(--risk-prevention)',
+        subtitle: 'Formation, EPI, aménagement, santé, gestion des risques'
+      }
+    };
+
+    // Configuration des sections pour le plan de prévention
+    const preventionSections = {
+      'Description sommaire des travaux': {
+        icon: 'fas fa-clipboard-list',
+        color: 'var(--prevention-description)',
+        subtitle: 'Résumé des éléments renseignés par l\'utilisateur'
+      },
+      'Identification des activités et des risques': {
+        icon: 'fas fa-search',
+        color: 'var(--prevention-identification)',
+        subtitle: 'Phases d\'activité dangereuses et moyens de prévention spécifiques'
+      },
+      'Matériels, installations et dispositifs': {
+        icon: 'fas fa-tools',
+        color: 'var(--prevention-materials)',
+        subtitle: 'Adaptation des matériels et conditions d\'entretien'
+      },
+      'Instructions et consignes aux travailleurs': {
+        icon: 'fas fa-user-shield',
+        color: 'var(--prevention-instructions)',
+        subtitle: 'Consignes de sécurité pour assurer la protection des travailleurs'
+      },
+      'Organisation des secours': {
+        icon: 'fas fa-first-aid',
+        color: 'var(--prevention-rescue)',
+        subtitle: 'Dispositif de premiers secours en cas d\'urgence'
+      },
+      'Coordination entre entreprises': {
+        icon: 'fas fa-handshake',
+        color: 'var(--prevention-coordination)',
+        subtitle: 'Commandement et coordination des travaux entre entreprises'
+      },
+      'Répartition des responsabilités et suivi': {
+        icon: 'fas fa-tasks',
+        color: 'var(--prevention-responsibilities)',
+        subtitle: 'Répartition des charges et suivi individuel de santé'
+      },
+      'Informations spécifiques (amiante)': {
+        icon: 'fas fa-exclamation-triangle',
+        color: 'var(--prevention-asbestos)',
+        subtitle: 'Dossiers techniques et rapports de repérage amiante'
+      }
+    };
+
+    // Fonction pour sélectionner la fonctionnalité
+    function selectFunction(functionType) {
+      currentFunction = functionType;
+      
+      // Mettre à jour les boutons
+      document.querySelectorAll('.function-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Mettre à jour le texte du bouton d'analyse
+      const analyzeBtn = document.querySelector('.btn-analyze');
+      if (functionType === 'risk') {
+        analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyser les risques';
+        document.querySelector('h1').innerHTML = '<i class="fas fa-hard-hat"></i> Analyse des Risques BTP';
+        document.querySelector('.subtitle').textContent = 'Solution professionnelle pour l\'analyse et la prévention des risques dans le bâtiment';
+      } else {
+        analyzeBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Générer le plan de prévention';
+        document.querySelector('h1').innerHTML = '<i class="fas fa-shield-alt"></i> Plan de Prévention BTP';
+        document.querySelector('.subtitle').textContent = 'Solution professionnelle pour l\'élaboration de plans de prévention complets';
+      }
+      
+      // Réinitialiser l'affichage
+      document.getElementById('preview').style.display = 'none';
+      document.getElementById('exportOptions').style.display = 'none';
+    }
+
+    // Fonctions pour le popup de paramètres
+    function openSettings() {
+      const overlay = document.getElementById('settingsOverlay');
+      overlay.style.display = 'flex';
+      populateModelOptions();
+      loadApiKey();
+    }
+
+    function closeSettings() {
+      const overlay = document.getElementById('settingsOverlay');
+      overlay.style.display = 'none';
+    }
+
+    // Fonctions pour gérer l'API Key
+    function toggleApiKeyVisibility() {
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const toggleIcon = document.querySelector('.toggle-password i');
+      
+      if (apiKeyInput.type === 'password') {
+        apiKeyInput.type = 'text';
+        toggleIcon.className = 'fas fa-eye-slash';
+      } else {
+        apiKeyInput.type = 'password';
+        toggleIcon.className = 'fas fa-eye';
+      }
+    }
+
+    function saveApiKey() {
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const statusDiv = document.getElementById('apiStatus');
+      
+      if (!apiKey) {
+        statusDiv.className = 'api-status error';
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Veuillez saisir une clé API';
+        return;
+      }
+      
+      // Vérifier le format basique de la clé API
+      if (!apiKey.startsWith('sk-or-')) {
+        statusDiv.className = 'api-status error';
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Format de clé API invalide (doit commencer par sk-or-)';
+        return;
+      }
+      
+      // Sauvegarder la clé API
+      localStorage.setItem('openRouterApiKey', apiKey);
+      API_KEY = apiKey;
+      
+      statusDiv.className = 'api-status success';
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Clé API sauvegardée avec succès';
+      
+      // Masquer après 3 secondes
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    function testApiKey() {
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      const apiKey = apiKeyInput.value.trim();
+      const statusDiv = document.getElementById('apiStatus');
+      
+      if (!apiKey) {
+        statusDiv.className = 'api-status error';
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Aucune clé API à tester';
+        return;
+      }
+      
+      // Vérifier le format
+      if (!apiKey.startsWith('sk-or-')) {
+        statusDiv.className = 'api-status error';
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Format de clé API invalide';
+        return;
+      }
+      
+      statusDiv.className = 'api-status testing';
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Test de la clé API en cours...';
+      
+      // Tester l'API avec une requête simple
+      fetch('https://openrouter.ai/api/v1/auth/key', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          statusDiv.className = 'api-status success';
+          statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Clé API valide ! Connexion réussie.';
+          // Sauvegarder automatiquement si le test réussit
+          saveApiKeyFromTest(apiKey);
+        } else {
+          throw new Error('Clé API invalide ou non autorisée');
+        }
+      })
+      .catch(error => {
+        statusDiv.className = 'api-status error';
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Erreur : ${error.message}`;
+      });
+    }
+
+    // Fonction pour sauvegarder après un test réussi
+    function saveApiKeyFromTest(apiKey) {
+      localStorage.setItem('openRouterApiKey', apiKey);
+      API_KEY = apiKey;
+    }
+
+    function clearApiKey() {
+      if (confirm('Êtes-vous sûr de vouloir effacer la clé API ? L\'analyse ne fonctionnera plus sans clé API valide.')) {
+        localStorage.removeItem('openRouterApiKey');
+        document.getElementById('apiKeyInput').value = '';
+        API_KEY = ""; // IMPORTANT: Mettre une chaîne vide
+        
+        const statusDiv = document.getElementById('apiStatus');
+        statusDiv.className = 'api-status success';
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Clé API effacée. L\'analyse est désormais désactivée.';
+        
+        setTimeout(() => {
+          statusDiv.style.display = 'none';
+        }, 4000);
+      }
+    }
+
+    function loadApiKey() {
+      const savedApiKey = localStorage.getItem('openRouterApiKey');
+      if (savedApiKey) {
+        document.getElementById('apiKeyInput').value = savedApiKey;
+        API_KEY = savedApiKey; // Mettre à jour la variable globale
+        updateApiKeyCounter();
+      } else {
+        // Si aucune clé n'est sauvegardée, on désactive l'API
+        API_KEY = "";
+        document.getElementById('apiKeyInput').value = '';
+        updateApiKeyCounter();
+      }
+    }
+
+    function updateApiKeyCounter() {
+      const input = document.getElementById('apiKeyInput');
+      const counter = document.getElementById('apiKeyCounter');
+      if (input && counter) {
+        counter.textContent = `${input.value.length} caractères`;
+        
+        if (input.value.length > 0 && !input.value.startsWith('sk-or-')) {
+          counter.className = 'char-counter warning';
+        } else {
+          counter.className = 'char-counter';
+        }
+      }
+    }
+
+    // Fonctions pour gérer les modèles personnalisés
+    function addCustomModel() {
+      const modelId = document.getElementById('modelIdInput').value.trim();
+      
+      if (!modelId) {
+        alert('Veuillez saisir l\'ID du modèle OpenRouter.');
+        return;
+      }
+      
+      // Extraire le nom et le fournisseur de l'ID
+      const parts = modelId.split('/');
+      const provider = parts[0] || 'Inconnu';
+      const modelName = parts[1] || modelId;
+      
+      const newModel = {
+        id: modelId,
+        name: modelName,
+        provider: provider,
+        type: 'personnalisé',
+        description: 'Modèle personnalisé ajouté par l\'utilisateur',
+        custom: true
+      };
+      
+      // Charger les modèles personnalisés existants
+      const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
+      
+      // Vérifier si le modèle existe déjà
+      if (customModels.some(model => model.id === modelId)) {
+        alert('Ce modèle existe déjà dans votre liste.');
+        return;
+      }
+      
+      // Ajouter le nouveau modèle
+      customModels.push(newModel);
+      saveCustomModels(customModels);
+      
+      // Réinitialiser le formulaire
+      document.getElementById('modelIdInput').value = '';
+      
+      // Mettre à jour l'affichage
+      populateModelOptions();
+      
+      // Afficher un message de succès
+      const statusDiv = document.getElementById('apiStatus');
+      statusDiv.className = 'api-status success';
+      statusDiv.style.display = 'block';
+      statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Modèle personnalisé ajouté avec succès !';
+      
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    function deleteCustomModel(modelId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce modèle personnalisé ?')) {
+        const customModels = JSON.parse(localStorage.getItem('customAiModels') || '[]');
+        const updatedModels = customModels.filter(model => model.id !== modelId);
+        saveCustomModels(updatedModels);
+        
+        // Recharger l'affichage
+        populateModelOptions();
+        
+        // Vérifier si le modèle supprimé était sélectionné
+        const currentModel = getCurrentModel();
+        if (currentModel === modelId) {
+          // Sélectionner le premier modèle disponible
+          const aiModels = getAiModels();
+          if (aiModels.length > 0) {
+            selectModel(aiModels[0].id);
+          }
+        }
+      }
+    }
+
+    function populateModelOptions() {
+      const modelOptions = document.getElementById('modelOptions');
+      const currentModel = getCurrentModel();
+      const aiModels = getAiModels();
+      
+      modelOptions.innerHTML = '';
+      
+      aiModels.forEach(model => {
+        const isSelected = model.id === currentModel;
+        const optionElement = document.createElement('div');
+        optionElement.className = `model-option ${isSelected ? 'selected' : ''}`;
+        optionElement.onclick = () => selectModel(model.id);
+        
+        let badge = '';
+        if (model.custom) {
+          badge = '<span class="model-custom-badge">PERSO</span>';
+        } else if (model.type === 'gratuit') {
+          badge = '<span class="model-free-badge">GRATUIT</span>';
+        } else if (model.type === 'preview') {
+          badge = '<span class="model-preview-badge">PREVIEW</span>';
+        } else {
+          badge = '<span class="model-preview-badge">PAYANT</span>';
+        }
+        
+        let deleteButton = '';
+        if (model.custom) {
+          deleteButton = `<button class="delete-model-btn" onclick="event.stopPropagation(); deleteCustomModel('${model.id}')">
+            <i class="fas fa-trash"></i>
+          </button>`;
+        }
+        
+        optionElement.innerHTML = `
+          <input type="radio" class="model-radio" name="ai-model" ${isSelected ? 'checked' : ''}>
+          <div class="model-info">
+            <div class="model-name">${model.name} • ${model.provider} ${badge}</div>
+            <div class="model-details">${model.description}</div>
+          </div>
+          ${deleteButton}
+        `;
+        
+        modelOptions.appendChild(optionElement);
+      });
+      
+      updateCurrentModelDisplay();
+    }
+
+    function selectModel(modelId) {
+      localStorage.setItem('selectedModel', modelId);
+      populateModelOptions();
+      updateCurrentModelDisplay();
+    }
+
+    function getCurrentModel() {
+      return localStorage.getItem('selectedModel') || 'google/gemma-3-27b-it:free';
+    }
+
+    function updateCurrentModelDisplay() {
+      const currentModel = getCurrentModel();
+      const aiModels = getAiModels();
+      const model = aiModels.find(m => m.id === currentModel);
+      const displayElement = document.getElementById('currentModelDisplay');
+      
+      if (model) {
+        let typeText = model.type;
+        if (model.custom) {
+          typeText = 'personnalisé';
+        }
+        displayElement.textContent = `${model.name} (${model.provider}) - ${typeText}`;
+      }
+    }
+
+    // Fermer le popup en cliquant en dehors
+    document.getElementById('settingsOverlay').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSettings();
+      }
+    });
+
+    // Fermer le popup avec la touche Échap
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeSettings();
+      }
+    });
+
+    // Fonction pour vérifier le statut de la clé API
+    function checkApiKeyStatus() {
+      if (!API_KEY || API_KEY.trim() === "" || !API_KEY.startsWith('sk-or-')) {
+        console.log("Aucune clé API valide configurée");
+        // Optionnel: Afficher un avertissement discret
+        const statusDiv = document.getElementById("status");
+        if (statusDiv) {
+          statusDiv.className = "status error";
+          statusDiv.style.display = "block";
+          statusDiv.innerHTML = `
+            <i class='fas fa-info-circle'></i> 
+            Clé API non configurée. 
+            <br><small>Configurez votre clé dans les paramètres pour utiliser l'analyse IA.</small>
+          `;
+          setTimeout(() => {
+            statusDiv.style.display = "none";
+          }, 5000);
+        }
+      }
+    }
+
+    // Fonction pour appliquer les corrections automatiques
+    function applySpellingCorrections(text) {
+      if (!text) return "";
+      
+      let correctedText = text;
+      
+      if (correctedText.length > 0) {
+        correctedText = correctedText.charAt(0).toUpperCase() + correctedText.slice(1);
+      }
+      
+      return correctedText;
+    }
+
+    // Fonction pour nettoyer les symboles *
+    function cleanMarkdownSymbols(text) {
+      if (!text) return "";
+      
+      let cleanedText = text
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/^\s*\*\s+/gm, '• ')
+        .replace(/#{1,6}\s?/g, '')
+        .replace(/\n\s*\*\s*/g, '\n• ')
+        .replace(/`(.*?)`/g, '$1')
+        .replace(/~~(.*?)~~/g, '$1')
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1');
+      
+      return cleanedText;
+    }
+
+    // Fonction pour détecter les sections principales
+    function isMainSection(line, sections) {
+      const mainSections = Object.keys(sections).map(section => section.toLowerCase());
+      const lowerLine = line.toLowerCase();
+      return mainSections.some(section => lowerLine.includes(section));
+    }
+
+    // Fonction pour détecter les sous-sections
+    function isSubSection(line) {
+      return line.includes(':') && !line.startsWith('•') && !line.startsWith('-') && line.length < 100;
+    }
+
+    // Fonction pour formater le texte d'export avec une présentation améliorée
+    function formatTextForExport(text, job, location, details) {
+      const now = new Date();
+      const dateString = now.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      let formattedText = '';
+      
+      // ================= EN-TÊTE =================
+      formattedText += '='.repeat(60) + '\n';
+      if (currentFunction === 'risk') {
+        formattedText += 'ANALYSE DES RISQUES BTP - DOCUMENT PROFESSIONNEL\n';
+      } else {
+        formattedText += 'PLAN DE PRÉVENTION BTP - DOCUMENT PROFESSIONNEL\n';
+      }
+      formattedText += '='.repeat(60) + '\n\n';
+      
+      // ================= CONTENU DE L'ANALYSE =================
+      const lines = text.split('\n');
+      let currentSection = '';
+      const sections = currentFunction === 'risk' ? riskSections : preventionSections;
+      
+      for (let line of lines) {
+        const trimmedLine = line.trim();
+        
+        // Détection des sections principales
+        if (isMainSection(trimmedLine, sections)) {
+          if (currentSection) {
+            formattedText += '\n';
+          }
+          
+          currentSection = trimmedLine;
+          formattedText += '\n' + '■'.repeat(50) + '\n';
+          formattedText += `■ ${currentSection.toUpperCase()}\n`;
+          formattedText += '■'.repeat(50) + '\n\n';
+          
+        } 
+        // Détection des sous-sections
+        else if (isSubSection(trimmedLine)) {
+          formattedText += `▲ ${trimmedLine}\n`;
+          formattedText += '─'.repeat(40) + '\n';
+        }
+        // Détection des éléments de liste
+        else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
+          const cleanItem = trimmedLine.replace(/^[•\-\s]*/, '');
+          formattedText += `  ✓ ${cleanItem}\n`;
+        }
+        // Texte normal
+        else if (trimmedLine) {
+          if (trimmedLine.match(/^[A-Za-zÀ-ÿ\s]+:/)) {
+            formattedText += `🔸 ${trimmedLine}\n`;
+          } else {
+            formattedText += `  ${trimmedLine}\n`;
+          }
+        } else {
+          formattedText += '\n';
+        }
+      }
+      
+      // ================= PIED DE PAGE =================
+      formattedText += '\n\n' + '='.repeat(60) + '\n';
+      formattedText += 'MESURES DE SÉCURITÉ OBLIGATOIRES\n';
+      formattedText += '='.repeat(60) + '\n\n';
+      formattedText += '⚠️  Port des Équipements de Protection Individuelle (EPI) obligatoire\n';
+      formattedText += '⚠️  Respect des procédures de sécurité en vigueur\n';
+      formattedText += '⚠️  Signalisation appropriée du chantier\n';
+      formattedText += '⚠️  Formation adaptée au personnel\n';
+      formattedText += '⚠️  Surveillance continue des opérations\n\n';
+      
+      // ================= SECTION SPÉCIFIQUE AU PLAN DE PRÉVENTION =================
+      if (currentFunction === 'prevention') {
+        formattedText += '='.repeat(60) + '\n';
+        formattedText += 'VALIDATION DU PLAN DE PRÉVENTION\n';
+        formattedText += '='.repeat(60) + '\n\n';
+        
+        formattedText += '📅 DATE DE L\'INSPECTION COMMUNE PRÉALABLE :\n';
+        formattedText += '   ____________________________________________________\n\n';
+        
+        formattedText += '👤 ENTREPRISE UTILISATRICE\n';
+        formattedText += '   Nom de l\'entreprise : ______________________________\n';
+        formattedText += '   Représentant : _____________________________________\n';
+        formattedText += '   Fonction : _________________________________________\n';
+        formattedText += '   Signature : \n';
+        formattedText += '   \n';
+        formattedText += '                     __________________________________\n';
+        formattedText += '                              (Signature et cachet)\n\n';
+        
+        formattedText += '🏗️  ENTREPRISE EXTÉRIEURE\n';
+        formattedText += '   Nom de l\'entreprise : ______________________________\n';
+        formattedText += '   Représentant : _____________________________________\n';
+        formattedText += '   Fonction : _________________________________________\n';
+        formattedText += '   Signature : \n';
+        formattedText += '   \n';
+        formattedText += '                     __________________________________\n';
+        formattedText += '                              (Signature et cachet)\n\n';
+        
+        formattedText += '📝 OBSERVATIONS ÉVENTUELLES :\n';
+        formattedText += '   ____________________________________________________\n';
+        formattedText += '   ____________________________________________________\n';
+        formattedText += '   ____________________________________________________\n\n';
+      }
+      
+      formattedText += '📋 DOCUMENT À CONSERVER DANS LE REGISTRE DE SÉCURITÉ\n\n';
+      
+      formattedText += '='.repeat(60) + '\n';
+      formattedText += 'FIN DU DOCUMENT\n';
+      formattedText += '='.repeat(60) + '\n';
+      
+      return formattedText;
+    }
+
+    // Formatage pour l'affichage HTML amélioré
+    function formatForPreview(text) {
+      if (!text) return "";
+      
+      let cleanText = cleanMarkdownSymbols(text);
+      
+      let result = '';
+      let currentSection = '';
+      let currentContent = '';
+      const sections = currentFunction === 'risk' ? riskSections : preventionSections;
+
+      const lines = cleanText.split('\n');
+      
+      for (let line of lines) {
+        const trimmedLine = line.trim();
+        
+        const isSection = Object.keys(sections).some(section => 
+          trimmedLine.toLowerCase().includes(section.toLowerCase()) || 
+          /^\d+\.\s+.*/i.test(trimmedLine)
+        );
+
+        if (isSection) {
+          if (currentSection && currentContent) {
+            result += createSectionHTML(currentSection, currentContent, sections);
+          }
+          
+          currentSection = trimmedLine;
+          currentContent = '';
+        } else if (trimmedLine) {
+          currentContent += line + '\n';
+        }
+      }
+      
+      if (currentSection && currentContent) {
+        result += createSectionHTML(currentSection, currentContent, sections);
+      }
+      
+      return result;
+    }
+
+    // Créer le HTML pour une section
+    function createSectionHTML(sectionTitle, content, sections) {
+      let sectionConfig = sections[sectionTitle];
+      if (!sectionConfig) {
+        for (const [key, config] of Object.entries(sections)) {
+          if (sectionTitle.toLowerCase().includes(key.toLowerCase())) {
+            sectionConfig = config;
+            break;
+          }
+        }
+      }
+      
+      if (!sectionConfig) {
+        sectionConfig = {
+          icon: 'fas fa-exclamation-triangle',
+          color: 'var(--accent)',
+          subtitle: 'Informations importantes'
+        };
+      }
+      
+      let sectionHTML = `
+        <div class="risk-section" style="--section-color: ${sectionConfig.color}">
+          <div class="risk-header">
+            <div class="risk-icon">
+              <i class="${sectionConfig.icon}"></i>
+            </div>
+            <div>
+              <div class="risk-title">${sectionTitle}</div>
+              <div class="risk-subtitle">${sectionConfig.subtitle}</div>
+            </div>
+          </div>
+          <div class="risk-content">
+      `;
+      
+      const lines = content.split('\n');
+      let currentSubRisk = '';
+      let subRiskTitle = '';
+      
+      for (let line of lines) {
+        const trimmedLine = line.trim();
+        
+        if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-') || /^\w+:/i.test(trimmedLine)) {
+          if (currentSubRisk) {
+            sectionHTML += createSubRiskHTML(subRiskTitle, currentSubRisk, sectionConfig.color);
+          }
+          
+          if (trimmedLine.includes(':')) {
+            const parts = trimmedLine.split(':');
+            subRiskTitle = parts[0].replace(/^[•\-\s]*/, '');
+            currentSubRisk = parts.slice(1).join(':').trim();
+          } else {
+            subRiskTitle = '';
+            currentSubRisk = trimmedLine.replace(/^[•\-\s]*/, '');
+          }
+        } else if (trimmedLine) {
+          currentSubRisk += (currentSubRisk ? '\n' : '') + trimmedLine;
+        }
+      }
+      
+      if (currentSubRisk) {
+        sectionHTML += createSubRiskHTML(subRiskTitle, currentSubRisk, sectionConfig.color);
+      }
+      
+      sectionHTML += `
+          </div>
+        </div>
+      `;
+      
+      return sectionHTML;
+    }
+
+    // Créer le HTML pour un sous-risque
+    function createSubRiskHTML(title, content, color) {
+      let subRiskHTML = `
+        <div class="sub-risk" style="--sub-risk-color: ${color}">
+      `;
+      
+      if (title) {
+        subRiskHTML += `
+          <div class="sub-risk-title">
+            <i class="fas fa-chevron-right"></i>
+            ${title}
+          </div>
+        `;
+      }
+      
+      const items = content.split('\n').filter(item => item.trim());
+      
+      if (items.length > 0) {
+        subRiskHTML += `<div class="sub-risk-items">`;
+        items.forEach(item => {
+          const cleanItem = item.replace(/^[•\-\s]*/, '').trim();
+          if (cleanItem) {
+            subRiskHTML += `<div class="sub-risk-item">${cleanItem}</div>`;
+          }
+        });
+        subRiskHTML += `</div>`;
+      }
+      
+      subRiskHTML += `</div>`;
+      return subRiskHTML;
+    }
+
+    // Fonction pour exporter en fichier texte formaté
+    function exportAsText() {
+      if (!currentRawResponse) return;
+      
+      const job = document.getElementById("job").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const details = document.getElementById("details").value.trim();
+      
+      const correctedJob = applySpellingCorrections(job);
+      const correctedLocation = applySpellingCorrections(location);
+      const correctedDetails = details ? applySpellingCorrections(details) : '';
+      
+      let cleanText = cleanMarkdownSymbols(currentRawResponse);
+      
+      // Formater le texte pour une meilleure présentation
+      const formattedText = formatTextForExport(cleanText, correctedJob, correctedLocation, correctedDetails);
+      
+      const blob = new Blob([formattedText], { type: 'text/plain; charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const prefix = currentFunction === 'risk' ? 'analyse_risques' : 'plan_prevention';
+      a.href = url;
+      a.download = `${prefix}_${correctedJob.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      const statusDiv = document.getElementById("status");
+      statusDiv.className = "status success";
+      statusDiv.style.display = "block";
+      statusDiv.innerHTML = "<i class='fas fa-check-circle'></i> Fichier texte formaté téléchargé !";
+      setTimeout(() => statusDiv.style.display = "none", 2500);
+    }
+
+    async function analyzeWithAI() {
+      // VÉRIFICATION DE LA CLÉ API AVANT TOUT
+      if (!API_KEY || API_KEY.trim() === "") {
+        const statusDiv = document.getElementById("status");
+        statusDiv.className = "status error";
+        statusDiv.style.display = "block";
+        statusDiv.innerHTML = `
+          <i class='fas fa-exclamation-triangle'></i> 
+          Aucune clé API configurée. 
+          <br><small>Veuillez configurer votre clé API OpenRouter dans les paramètres.</small>
+        `;
+        return;
+      }
+
+      // Vérification supplémentaire du format de la clé API
+      if (!API_KEY.startsWith('sk-or-')) {
+        const statusDiv = document.getElementById("status");
+        statusDiv.className = "status error";
+        statusDiv.style.display = "block";
+        statusDiv.innerHTML = `
+          <i class='fas fa-exclamation-triangle'></i> 
+          Clé API invalide. 
+          <br><small>La clé doit commencer par 'sk-or-'. Vérifiez vos paramètres.</small>
+        `;
+        return;
+      }
+
+      const model = getCurrentModel();
+      const job = document.getElementById("job").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const details = document.getElementById("details").value.trim();
+      const btn = document.querySelector(".btn-analyze");
+      const statusDiv = document.getElementById("status");
+      const previewDiv = document.getElementById("preview");
+      const previewContent = document.getElementById("previewContent");
+      const previewTitle = document.getElementById("previewTitle");
+      const previewSubtitle = document.getElementById("previewSubtitle");
+      const exportOptions = document.getElementById("exportOptions");
+
+      if (!job || !location) {
+        statusDiv.className = "status error";
+        statusDiv.style.display = "block";
+        statusDiv.innerHTML = "<i class='fas fa-exclamation-triangle'></i> Veuillez remplir 'Métier/tâche' et 'Lieu'.";
+        return;
+      }
+
+      btn.disabled = true;
+      if (currentFunction === 'risk') {
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Analyse en cours…";
+        previewTitle.textContent = "Analyse des Risques";
+        previewSubtitle.textContent = "Résultat de l'analyse généré automatiquement";
+      } else {
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Génération en cours…";
+        previewTitle.textContent = "Plan de Prévention";
+        previewSubtitle.textContent = "Plan de prévention généré automatiquement";
+      }
+      statusDiv.style.display = "none";
+      previewDiv.style.display = "none";
+      exportOptions.style.display = "none";
+
+      let prompt = '';
+      
+      if (currentFunction === 'risk') {
+        // PROMPT pour l'analyse des risques
+        prompt = `En tant qu'expert en prévention des risques professionnels dans le BTP en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour minimiser les accidents de travail sur les chantiers.
+
+Analysez les dangers liés à :
+
+- Tâche/métier : ${job}
+- Lieu : ${location}
+${details ? `- Contexte : ${details}` : ''}
+
+Structurez votre réponse en 8 parties :
+0. Description sommaire des travaux ou du travail à effectuer : Faites un résumé clair et concis des éléments renseignés (qui, quoi, où et quand)
+1. Risques physiques : chutes, bruit, fatigue, accidents liés aux machines et outils ou engins
+2. Risques chimiques ou biologiques : amiante, plomb, poussières (silice), solvants, gaz toxiques, moisissures, bactéries.
+3. Contraintes ergonomiques : mauvaises postures, tâches répétitives, levée de charges lourdes, stress.
+4. Risques environnementaux : pollution de l'air, températures extrêmes, conditions climatiques difficiles, présence de réseaux d'alimentation générale (exemple : EDF, GAZ)
+5. Activités des tiers : risques liés aux actions en site occupé (par exemple, passage de véhicules ou engins, piétons, etc.).
+6. Organisation des travaux : Circulation et accès aux zones de travail, Signalisation des risques et zones interdites, Procédures d'urgence et premiers secours.
+7. Mesures de prévention : formation à la sécurité, équipements de protection, aménagement ergonomique, suivi de la santé, gestion des risques.
+
+Utilisez des listes à puces, un langage clair, professionnel, en français. Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.`;
+      } else {
+        // PROMPT pour le plan de prévention
+        prompt = `En tant qu'expert en prévention des risques professionnels dans le BTP en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour élaborer des plans de prévention complets.
+
+Élaborez un plan de prévention détaillé pour :
+
+- Tâche/métier : ${job}
+- Lieu : ${location}
+${details ? `- Contexte : ${details}` : ''}
+
+Structurez votre réponse en 8 parties :
+0. Description sommaire des travaux ou du travail à effectuer : Faites un résumé clair et concis des éléments renseignés (qui, quoi, où et quand)
+1. Identification des activités et des risques : Définition des phases d'activité dangereuses, Moyens de prévention spécifiques correspondants à chaque phase
+2. Matériels, installations et dispositifs : Adaptation des matériels, installations et dispositifs à la nature des opérations à réaliser, Définition des conditions d'entretien de ces matériels et installations
+3. Instructions et consignes aux travailleurs : Instructions à donner aux travailleurs pour assurer leur sécurité
+4. Organisation des secours : Organisation mise en place pour assurer les premiers secours en cas d'urgence, Description du dispositif de secours mis en place par l'entreprise utilisatrice
+5. Coordination entre entreprises : Conditions de participation des travailleurs d'une entreprise aux travaux réalisés par une autre, Organisation nécessaire au maintien de la sécurité, notamment le commandement et la coordination des travaux
+6. Répartition des responsabilités et suivi : Répartition des charges d'entretien entre les entreprises extérieures, Liste des postes occupés par des travailleurs nécessitant un suivi individuel renforcé de leur état de santé
+7. Informations spécifiques (amiante) : Dossiers techniques relatifs à la recherche et à l'identification des matériaux contenant de l'amiante, Rapport de repérage de l'amiante le cas échéant
+
+Utilisez des listes à puces, un langage clair, professionnel, en français. Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.`;
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": window.location.href,
+            "X-Title": "Copie du résultat"
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.4
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok || data.error) throw new Error(data.error?.message || "Erreur API");
+
+        currentRawResponse = data.choices?.[0]?.message?.content?.trim() || "Aucune réponse reçue.";
+        
+        const cleanedResponse = cleanMarkdownSymbols(currentRawResponse);
+        previewContent.innerHTML = formatForPreview(cleanedResponse);
+        previewDiv.style.display = "block";
+        exportOptions.style.display = "flex";
+
+        statusDiv.className = "status success";
+        statusDiv.style.display = "block";
+        const successMessage = currentFunction === 'risk' ? 
+          "Analyse terminée. Vous pouvez exporter le résultat." : 
+          "Plan de prévention généré. Vous pouvez exporter le résultat.";
+        statusDiv.innerHTML = `<i class='fas fa-check-circle'></i> ${successMessage}`;
+      } catch (error) {
+        console.error("Erreur :", error);
+        statusDiv.className = "status error";
+        statusDiv.style.display = "block";
+        statusDiv.innerHTML = `<i class='fas fa-exclamation-circle'></i> ${error.message}`;
+      } finally {
+        btn.disabled = false;
+        if (currentFunction === 'risk') {
+          btn.innerHTML = "<i class='fas fa-search'></i> Analyser les risques";
+        } else {
+          btn.innerHTML = "<i class='fas fa-shield-alt'></i> Générer le plan de prévention";
+        }
+      }
+    }
+
+    // Initialiser les éléments flottants au chargement
+    window.addEventListener('DOMContentLoaded', () => {
+      createFloatingElements();
+      updateCurrentModelDisplay();
+      loadApiKey();
+      checkApiKeyStatus();
+      
+      // Initialiser le compteur de caractères pour l'API Key
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      if (apiKeyInput) {
+        apiKeyInput.addEventListener('input', updateApiKeyCounter);
+        updateApiKeyCounter();
+      }
+    });
+  </script>
+</body>
+</html>
