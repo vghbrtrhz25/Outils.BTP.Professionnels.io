@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Analyse des Risques BTP – Interface Professionnelle</title>
+  <title>Analyse des Risques Professionnels – Interface Expert Multisectorielle</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -21,6 +21,14 @@
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       --inner-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
       
+      /* Couleurs par secteur */
+      --sector-btp: #0f4c75;
+      --sector-industrie: #7b1fa2;
+      --sector-tertiaire: #d84315;
+      --sector-agricole: #388e3c;
+      --sector-sante: #00838f;
+      
+      /* Couleurs risques */
       --risk-physical: #ff6b6b;
       --risk-chemical: #4ecdc4;
       --risk-ergonomic: #ffe66d;
@@ -185,6 +193,103 @@
       }
     }
 
+    .configuration-panel {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      margin-bottom: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    .config-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sector-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .sector-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 15px;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sector-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .sector-btn:hover::before {
+      left: 100%;
+    }
+
+    .sector-btn.active {
+      background: var(--sector-color, var(--primary));
+      border-color: var(--sector-color, var(--accent));
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .sector-btn i {
+      margin-right: 8px;
+    }
+
+    .reglementation-info {
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 15px;
+      display: none;
+    }
+
+    .reglementation-info.active {
+      display: block;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .reg-title {
+      font-weight: 600;
+      color: #ffd54f;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reg-content {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.5;
+    }
+
     .function-selector {
       display: flex;
       gap: 15px;
@@ -253,6 +358,10 @@
       }
       
       .function-selector {
+        flex-direction: column;
+      }
+      
+      .sector-selector {
         flex-direction: column;
       }
     }
@@ -587,9 +696,6 @@
     @keyframes statusPulse {
       0% {
         box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4);
-      }
-      70% {
-        box-shadow: 0 0 0 10px rgba(46, 125, 50, 0);
       }
       100% {
         box-shadow: 0 0 0 0 rgba(46, 125, 50, 0);
@@ -1068,6 +1174,10 @@
       .api-key-section, .add-model-section {
         padding: 15px;
       }
+      
+      .configuration-panel {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -1230,8 +1340,51 @@
       <button class="settings-btn" onclick="openSettings()">
         <i class="fas fa-cog"></i>
       </button>
-      <h1><i class="fas fa-hard-hat"></i> Outils BTP Professionnels</h1>
-      <p class="subtitle">Solutions professionnelles pour l'analyse des risques et les plans de prévention</p>
+      <h1><i class="fas fa-hard-hat"></i> Expert Risques Professionnels</h1>
+      <p class="subtitle">Solution multisectorielle pour l'analyse détaillée des risques et les plans de prévention</p>
+    </div>
+
+    <!-- Nouveau panneau de configuration -->
+    <div class="configuration-panel">
+      <div class="config-title">
+        <i class="fas fa-sliders-h"></i>
+        Configuration de l'analyse
+      </div>
+      
+      <div class="form-group">
+        <label for="sectorSelect">
+          <i class="fas fa-industry label-icon"></i>
+          Secteur d'activité
+        </label>
+        <div class="sector-selector">
+          <button class="sector-btn active" data-sector="btp" onclick="selectSector('btp')" style="--sector-color: var(--sector-btp)">
+            <i class="fas fa-hard-hat"></i> BTP
+          </button>
+          <button class="sector-btn" data-sector="industrie" onclick="selectSector('industrie')" style="--sector-color: var(--sector-industrie)">
+            <i class="fas fa-cogs"></i> Industrie
+          </button>
+          <button class="sector-btn" data-sector="tertiaire" onclick="selectSector('tertiaire')" style="--sector-color: var(--sector-tertiaire)">
+            <i class="fas fa-building"></i> Tertiaire
+          </button>
+          <button class="sector-btn" data-sector="agricole" onclick="selectSector('agricole')" style="--sector-color: var(--sector-agricole)">
+            <i class="fas fa-tractor"></i> Agricole
+          </button>
+          <button class="sector-btn" data-sector="sante" onclick="selectSector('sante')" style="--sector-color: var(--sector-sante)">
+            <i class="fas fa-hospital"></i> Santé
+          </button>
+        </div>
+      </div>
+      
+      <!-- Informations réglementaires par secteur -->
+      <div class="reglementation-info" id="reglementationInfo">
+        <div class="reg-title">
+          <i class="fas fa-gavel"></i>
+          <span id="regTitle">Réglementation BTP</span>
+        </div>
+        <div class="reg-content" id="regContent">
+          Code du travail, Code de la construction, Décret CMR, Règlementation amiante, Équipements de protection individuelle...
+        </div>
+      </div>
     </div>
 
     <div class="function-selector">
@@ -1246,17 +1399,17 @@
     <div class="input-grid">
       <div class="form-group">
         <label for="job"><i class="fas fa-tools label-icon"></i> Métier ou tâche</label>
-        <input type="text" id="job" placeholder="Ex: Démolition de cloison" required />
+        <input type="text" id="job" placeholder="Ex: Démolition de cloison, Maintenance machine, Travail sur écran..." required />
       </div>
 
       <div class="form-group">
         <label for="location"><i class="fas fa-map-marker-alt label-icon"></i> Lieu spécifique</label>
-        <input type="text" id="location" placeholder="Ex: Appartement ancien, rez-de-chaussée" required />
+        <input type="text" id="location" placeholder="Ex: Chantier, Atelier, Bureau, Exploitation agricole..." required />
       </div>
 
       <div class="form-group" style="grid-column: 1 / -1;">
         <label for="details"><i class="fas fa-info-circle label-icon"></i> Conditions ou précisions (facultatif)</label>
-        <textarea id="details" placeholder="Ex: Présence de poussières, espace confiné, outils manuels, conditions météo..."></textarea>
+        <textarea id="details" placeholder="Ex: Présence de produits chimiques, espace confiné, horaires de nuit, conditions météo, public présent..."></textarea>
       </div>
     </div>
 
@@ -1269,6 +1422,9 @@
     <div class="export-options" id="exportOptions">
       <button class="export-btn" onclick="exportAsText()">
         <i class="fas fa-file-alt"></i> Exporter en .txt
+      </button>
+      <button class="export-btn" onclick="exportAsRTF()">
+        <i class="fas fa-file-word"></i> Exporter en .rtf
       </button>
     </div>
 
@@ -1324,6 +1480,476 @@
     let currentRawResponse = "";
     let currentFunction = "risk";
     let currentEditingModel = null;
+    let currentSector = "btp";
+
+    // Configuration des secteurs avec réglementations spécifiques
+    const sectorsConfig = {
+      btp: {
+        name: "Bâtiment et Travaux Publics",
+        color: "var(--sector-btp)",
+        icon: "fas fa-hard-hat",
+        regulations: {
+          title: "Réglementation BTP - Principaux textes",
+          content: "Code du travail, Code de la construction, Décret CMR (91-1417), Règlementation amiante (2012-639), Équipements de protection individuelle, Plan de prévention, Protocole de sécurité."
+        },
+        riskSections: {
+          'Description sommaire des travaux': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--risk-description)',
+            subtitle: 'Résumé détaillé des éléments renseignés par l\'utilisateur'
+          },
+          'Risques physiques et mécaniques': {
+            icon: 'fas fa-running',
+            color: 'var(--risk-physical)',
+            subtitle: 'Chutes de hauteur, heurts, écrasement, bruit, vibrations, accidents machines/outils/engins'
+          },
+          'Risques chimiques et biologiques': {
+            icon: 'fas fa-flask',
+            color: 'var(--risk-chemical)',
+            subtitle: 'Amiante, plomb, poussières de silice, solvants, résines, gaz, moisissures, légionelles'
+          },
+          'Contraintes ergonomiques et physiques': {
+            icon: 'fas fa-user-injured',
+            color: 'var(--risk-ergonomic)',
+            subtitle: 'Mauvaises postures, manutentions manuelles, tâches répétitives, charges lourdes, efforts prolongés'
+          },
+          'Risques environnementaux et climatiques': {
+            icon: 'fas fa-cloud-showers-heavy',
+            color: 'var(--risk-environmental)',
+            subtitle: 'Conditions météorologiques, températures extrêmes, intempéries, présence de réseaux enterrés'
+          },
+          'Risques liés aux activités des tiers': {
+            icon: 'fas fa-users',
+            color: 'var(--risk-third-party)',
+            subtitle: 'Coactivité, circulation engins, piétons, interfaces entre entreprises, sous-traitance'
+          },
+          'Organisation et coordination des travaux': {
+            icon: 'fas fa-sitemap',
+            color: 'var(--risk-organization)',
+            subtitle: 'Planification, signalisation, procédures d\'urgence, premiers secours, consignation'
+          },
+          'Mesures de prévention techniques et organisationnelles': {
+            icon: 'fas fa-shield-alt',
+            color: 'var(--risk-prevention)',
+            subtitle: 'Protections collectives, EPI, formation, suivi médical, management de la sécurité'
+          }
+        },
+        preventionSections: {
+          'Description détaillée des travaux': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--prevention-description)',
+            subtitle: 'Analyse complète du contexte et des spécificités du chantier'
+          },
+          'Identification exhaustive des activités et des risques': {
+            icon: 'fas fa-search',
+            color: 'var(--prevention-identification)',
+            subtitle: 'Phases d\'activité dangereuses et moyens de prévention spécifiques détaillés'
+          },
+          'Matériels, installations et dispositifs de sécurité': {
+            icon: 'fas fa-tools',
+            color: 'var(--prevention-materials)',
+            subtitle: 'Adaptation des matériels et conditions d\'entretien avec spécifications techniques'
+          },
+          'Instructions et consignes détaillées aux travailleurs': {
+            icon: 'fas fa-user-shield',
+            color: 'var(--prevention-instructions)',
+            subtitle: 'Consignes de sécurité complètes pour assurer la protection des travailleurs'
+          },
+          'Organisation des secours et procédures d\'urgence': {
+            icon: 'fas fa-first-aid',
+            color: 'var(--prevention-rescue)',
+            subtitle: 'Dispositif de premiers secours détaillé en cas d\'urgence'
+          },
+          'Coordination et interfaces entre entreprises': {
+            icon: 'fas fa-handshake',
+            color: 'var(--prevention-coordination)',
+            subtitle: 'Commandement et coordination des travaux entre entreprises avec planning'
+          },
+          'Répartition des responsabilités et suivi individualisé': {
+            icon: 'fas fa-tasks',
+            color: 'var(--prevention-responsibilities)',
+            subtitle: 'Répartition détaillée des charges et suivi individuel de santé'
+          },
+          'Informations spécifiques et réglementation technique': {
+            icon: 'fas fa-exclamation-triangle',
+            color: 'var(--prevention-asbestos)',
+            subtitle: 'Dossiers techniques, rapports de repérage, études de sécurité complètes'
+          }
+        }
+      },
+      industrie: {
+        name: "Industrie",
+        color: "var(--sector-industrie)",
+        icon: "fas fa-cogs",
+        regulations: {
+          title: "Réglementation Industrie - Principaux textes",
+          content: "Code du travail, Directive Machines 2006/42/CE, ATEX (atmosphères explosives), REACH (produits chimiques), ICPE (installations classées), Maintenance des équipements."
+        },
+        riskSections: {
+          'Description détaillée des opérations industrielles': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--risk-description)',
+            subtitle: 'Analyse complète des activités industrielles à réaliser'
+          },
+          'Risques machines, équipements et installations': {
+            icon: 'fas fa-cog',
+            color: '#ff6b6b',
+            subtitle: 'Pièces en mouvement, énergies, maintenance, conformité CE, vérifications réglementaires'
+          },
+          'Risques chimiques, ATEX et produits dangereux': {
+            icon: 'fas fa-vial',
+            color: '#4ecdc4',
+            subtitle: 'Produits dangereux, atmosphères explosives, étiquetage CLP, fiches de données sécurité'
+          },
+          'Risques électriques, énergies et fluides': {
+            icon: 'fas fa-bolt',
+            color: '#ffe66d',
+            subtitle: 'Haute tension, courants forts, consignation, habilitation, réseaux fluides'
+          },
+          'Risques thermiques, incendie et explosion': {
+            icon: 'fas fa-fire',
+            color: '#ff9800',
+            subtitle: 'Températures extrêmes, sources d\'ignition, moyens d\'extinction, classement ERP'
+          },
+          'Organisation, procédures et modes opératoires': {
+            icon: 'fas fa-sitemap',
+            color: '#9c27b0',
+            subtitle: 'Permis de travail, procédures opératoires, signalisation, lock-out tag-out'
+          },
+          'Environnement industriel et ambiances de travail': {
+            icon: 'fas fa-industry',
+            color: '#607d8b',
+            subtitle: 'Bruit, éclairage, ventilation, ambiances thermiques, qualité de l\'air'
+          },
+          'Mesures de prévention techniques et organisationnelles': {
+            icon: 'fas fa-shield-alt',
+            color: '#2e7d32',
+            subtitle: 'Protections collectives, EPI, formation spécifique, maintenance préventive'
+          }
+        },
+        preventionSections: {
+          'Description détaillée des opérations': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--prevention-description)',
+            subtitle: 'Analyse exhaustive des activités industrielles'
+          },
+          'Analyse détaillée des risques machines': {
+            icon: 'fas fa-cog',
+            color: '#e91e63',
+            subtitle: 'Documentation technique complète, procédures de consignation détaillées'
+          },
+          'Gestion approfondie des produits chimiques': {
+            icon: 'fas fa-vial',
+            color: '#2196f3',
+            subtitle: 'Fiches de données sécurité, stockage réglementaire, manipulation sécurisée'
+          },
+          'Procédures opératoires détaillées': {
+            icon: 'fas fa-file-alt',
+            color: '#4caf50',
+            subtitle: 'Instructions détaillées pour chaque opération avec check-lists'
+          },
+          'Organisation complète des secours industriels': {
+            icon: 'fas fa-first-aid',
+            color: '#ff5722',
+            subtitle: 'Plan d\'intervention détaillé, équipes de première intervention formées'
+          },
+          'Maintenance et vérifications réglementaires': {
+            icon: 'fas fa-tools',
+            color: '#9c27b0',
+            subtitle: 'Planning de maintenance préventive, registre de sécurité exhaustif'
+          },
+          'Formation et habilitations spécifiques': {
+            icon: 'fas fa-user-graduate',
+            color: '#607d8b',
+            subtitle: 'Compétences requises détaillées, formations spécifiques réglementaires'
+          },
+          'Surveillance médicale et suivi des expositions': {
+            icon: 'fas fa-stethoscope',
+            color: '#795548',
+            subtitle: 'Visite médicale adaptée, suivi des expositions spécifiques, traçabilité'
+          }
+        }
+      },
+      tertiaire: {
+        name: "Tertiaire",
+        color: "var(--sector-tertiaire)",
+        icon: "fas fa-building",
+        regulations: {
+          title: "Réglementation Tertiaire - Principaux textes",
+          content: "Code du travail, Décret écrans 91-451, RPS (risques psychosociaux), Document Unique, Aménagement des espaces de travail, Accessibilité, Sécurité incendie ERP."
+        },
+        riskSections: {
+          'Description détaillée des activités tertiaires': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--risk-description)',
+            subtitle: 'Analyse exhaustive des tâches de bureau ou de service'
+          },
+          'Risques psychosociaux et organisationnels': {
+            icon: 'fas fa-brain',
+            color: '#7b1fa2',
+            subtitle: 'Stress, charge mentale, relations de travail, organisation, harcèlement, burn-out'
+          },
+          'Risques liés aux écrans et à la sédentarité': {
+            icon: 'fas fa-desktop',
+            color: '#2196f3',
+            subtitle: 'Fatigue visuelle, troubles musculosquelettiques, sédentarité, postures statiques'
+          },
+          'Ergonomie du poste et aménagement des espaces': {
+            icon: 'fas fa-chair',
+            color: '#4caf50',
+            subtitle: 'Aménagement, mobilier adapté, posture, environnement lumineux, acoustique'
+          },
+          'Risques incendie et sécurité des établissements': {
+            icon: 'fas fa-fire-extinguisher',
+            color: '#ff5722',
+            subtitle: 'Dégagements, alarmes, extincteurs, exercices d\'évacuation, registre de sécurité'
+          },
+          'Environnement de travail et qualité de vie': {
+            icon: 'fas fa-temperature-low',
+            color: '#00bcd4',
+            subtitle: 'Qualité de l\'air, bruit, température, éclairage, espaces communs, restauration'
+          },
+          'Déplacements, accueil et espaces publics': {
+            icon: 'fas fa-walking',
+            color: '#795548',
+            subtitle: 'Circulation, espaces publics, accès personnes handicapées, signalétique'
+          },
+          'Prévention tertiaire et management de la QVT': {
+            icon: 'fas fa-shield-alt',
+            color: '#2e7d32',
+            subtitle: 'Formation, sensibilisation, aménagement des espaces, qualité de vie au travail'
+          }
+        },
+        preventionSections: {
+          'Description détaillée des activités': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--prevention-description)',
+            subtitle: 'Analyse exhaustive des tâches de bureau ou de service'
+          },
+          'Évaluation approfondie des RPS': {
+            icon: 'fas fa-brain',
+            color: '#e91e63',
+            subtitle: 'Analyse organisationnelle détaillée, indicateurs de stress, enquêtes climat social'
+          },
+          'Aménagement ergonomique des postes': {
+            icon: 'fas fa-desktop',
+            color: '#2196f3',
+            subtitle: 'Ergonomie complète, mobilier adapté, pauses régulières, exercices de relaxation'
+          },
+          'Procédures de sécurité et plans d\'urgence': {
+            icon: 'fas fa-file-shield',
+            color: '#4caf50',
+            subtitle: 'Consignes incendie détaillées, plans d\'évacuation, accueil sécurisé'
+          },
+          'Organisation du travail et management': {
+            icon: 'fas fa-users-cog',
+            color: '#ff5722',
+            subtitle: 'Horaires adaptés, charge de travail, autonomie, reconnaissance, feedback'
+          },
+          'Formation continue et information': {
+            icon: 'fas fa-user-graduate',
+            color: '#9c27b0',
+            subtitle: 'Sensibilisation RPS détaillée, gestes et postures, sécurité informatique'
+          },
+          'Surveillance médicale et suivi santé': {
+            icon: 'fas fa-stethoscope',
+            color: '#607d8b',
+            subtitle: 'Visite médicale adaptée, suivi des TMS et RPS, absentéisme'
+          },
+          'Amélioration continue et indicateurs': {
+            icon: 'fas fa-chart-line',
+            color: '#795548',
+            subtitle: 'Enquêtes satisfaction détaillées, indicateurs de prévention, tableaux de bord'
+          }
+        }
+      },
+      agricole: {
+        name: "Agricole",
+        color: "var(--sector-agricole)",
+        icon: "fas fa-tractor",
+        regulations: {
+          title: "Réglementation Agricole - Principaux textes",
+          content: "Code rural, MSA (Mutualité Sociale Agricole), Produits phytosanitaires, Machines agricoles, Élevage, Explosifs agricoles, Bâtiments d'exploitation."
+        },
+        riskSections: {
+          'Description détaillée des travaux agricoles': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--risk-description)',
+            subtitle: 'Analyse exhaustive des activités agricoles à réaliser'
+          },
+          'Risques machines et équipements agricoles': {
+            icon: 'fas fa-tractor',
+            color: '#8d6e63',
+            subtitle: 'Tracteurs, moissonneuses, outils, maintenance, retournements, protections'
+          },
+          'Risques chimiques et produits phytosanitaires': {
+            icon: 'fas fa-spray-can',
+            color: '#4caf50',
+            subtitle: 'Produits phytosanitaires, engrais, manipulation, stockage, épandage, pulvérisation'
+          },
+          'Risques animaux, biologiques et zoonoses': {
+            icon: 'fas fa-paw',
+            color: '#795548',
+            subtitle: 'Élevage, zoonoses, manipulations animales, contention, bâtiments d\'élevage'
+          },
+          'Risques environnementaux et conditions extérieures': {
+            icon: 'fas fa-tree',
+            color: '#388e3c',
+            subtitle: 'Conditions météo, relief, isolement, interventions, intempéries, saisonnalité'
+          },
+          'Risques liés aux bâtiments et installations': {
+            icon: 'fas fa-warehouse',
+            color: '#ff9800',
+            subtitle: 'Silos, stockages, atmosphères confinées, éclairage, ventilation, gaz'
+          },
+          'Organisation des travaux et saisonnalité': {
+            icon: 'fas fa-sitemap',
+            color: '#9c27b0',
+            subtitle: 'Planification, saisonnalité, travail isolé, urgence, communication'
+          },
+          'Prévention agricole et formation MSA': {
+            icon: 'fas fa-shield-alt',
+            color: '#2e7d32',
+            subtitle: 'Formation MSA détaillée, équipements adaptés, suivi médical spécifique'
+          }
+        },
+        preventionSections: {
+          'Description détaillée des travaux': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--prevention-description)',
+            subtitle: 'Analyse exhaustive des activités agricoles'
+          },
+          'Sécurité approfondie des machines': {
+            icon: 'fas fa-tractor',
+            color: '#e91e63',
+            subtitle: 'Vérifications détaillées, entretien rigoureux, formations spécifiques adaptées'
+          },
+          'Gestion rigoureuse des produits phytosanitaires': {
+            icon: 'fas fa-spray-can',
+            color: '#2196f3',
+            subtitle: 'Certiphyto obligatoire, équipements de protection complets, stockage réglementaire'
+          },
+          'Protection des animaux et prévention des accidents': {
+            icon: 'fas fa-paw',
+            color: '#4caf50',
+            subtitle: 'Comportement animal étudié, installations adaptées, procédures de contention'
+          },
+          'Organisation détaillée des secours': {
+            icon: 'fas fa-first-aid',
+            color: '#ff5722',
+            subtitle: 'Plan d\'intervention spécifique, moyens de communication adaptés, isolement'
+          },
+          'Formation et habilitations agricoles': {
+            icon: 'fas fa-user-graduate',
+            color: '#9c27b0',
+            subtitle: 'Certificats obligatoires, agréments spécifiques, formations MSA complètes'
+          },
+          'Surveillance médicale renforcée': {
+            icon: 'fas fa-stethoscope',
+            color: '#607d8b',
+            subtitle: 'Visite médicale adaptée, suivi des expositions spécifiques, traçabilité'
+          },
+          'Amélioration continue des pratiques': {
+            icon: 'fas fa-seedling',
+            color: '#795548',
+            subtitle: 'Innovations techniques, prévention intégrée, agriculture durable et sûre'
+          }
+        }
+      },
+      sante: {
+        name: "Santé et Médico-social",
+        color: "var(--sector-sante)",
+        icon: "fas fa-hospital",
+        regulations: {
+          title: "Réglementation Santé - Principaux textes",
+          content: "Code de la santé publique, Décret risques biologiques, Produits de santé, Hygiène hospitalière, Gestes et postures, Risques psychosociaux, Dossier médical."
+        },
+        riskSections: {
+          'Description détaillée des activités de soins': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--risk-description)',
+            subtitle: 'Analyse exhaustive des soins ou services à réaliser'
+          },
+          'Risques biologiques et infectieux': {
+            icon: 'fas fa-biohazard',
+            color: '#d32f2f',
+            subtitle: 'Agents pathogènes, prélèvements, déchets infectieux, AES, vaccination, isolement'
+          },
+          'Risques chimiques et produits de santé': {
+            icon: 'fas fa-pills',
+            color: '#7b1fa2',
+            subtitle: 'Médicaments, désinfectants, produits de contraste, CMR, cytotoxiques, anesthésiques'
+          },
+          'Risques liés aux patients et à la manutention': {
+            icon: 'fas fa-procedures',
+            color: '#1976d2',
+            subtitle: 'Manutention des patients, agitation, comportements, dépendance, contention'
+          },
+          'Risques organisationnels et psychosociaux': {
+            icon: 'fas fa-user-clock',
+            color: '#388e3c',
+            subtitle: 'Horaires décalés, charge de travail, stress, relations, burn-out, urgences'
+          },
+          'Risques techniques et équipements médicaux': {
+            icon: 'fas fa-x-ray',
+            color: '#f57c00',
+            subtitle: 'Équipements médicaux, rayonnements, maintenance, informatique, biomédical'
+          },
+          'Environnement de soins et hygiène': {
+            icon: 'fas fa-hand-sparkles',
+            color: '#00838f',
+            subtitle: 'Hygiène, asepsie, circuits, nettoyage, stérilisation, décontamination'
+          },
+          'Prévention en santé et sécurité des soins': {
+            icon: 'fas fa-shield-alt',
+            color: '#2e7d32',
+            subtitle: 'Vaccination, EPI adaptés, formation continue, protocoles, gestion des risques'
+          }
+        },
+        preventionSections: {
+          'Description détaillée des activités': {
+            icon: 'fas fa-clipboard-list',
+            color: 'var(--prevention-description)',
+            subtitle: 'Analyse exhaustive des soins ou services'
+          },
+          'Gestion rigoureuse des risques biologiques': {
+            icon: 'fas fa-biohazard',
+            color: '#e91e63',
+            subtitle: 'Protocoles d\'hygiène stricts, vaccination obligatoire, équipements de protection'
+          },
+          'Sécurité des soins et traçabilité': {
+            icon: 'fas fa-hand-holding-medical',
+            color: '#2196f3',
+            subtitle: 'Procédures détaillées, check-lists sécurité, traçabilité complète, bonnes pratiques'
+          },
+          'Manutention des patients et ergonomie': {
+            icon: 'fas fa-people-carry',
+            color: '#4caf50',
+            subtitle: 'Techniques validées, aides mécaniques adaptées, formation continue, évaluation'
+          },
+          'Organisation des secours et urgences': {
+            icon: 'fas fa-ambulance',
+            color: '#ff5722',
+            subtitle: 'Plan blanc détaillé, urgences organisées, équipes mobiles, simulation'
+          },
+          'Formation continue et compétences': {
+            icon: 'fas fa-user-md',
+            color: '#9c27b0',
+            subtitle: 'Compétences certifiées, protocoles maîtrisés, gestes techniques, simulation'
+          },
+          'Surveillance médicale du personnel': {
+            icon: 'fas fa-stethoscope',
+            color: '#607d8b',
+            subtitle: 'Visite médicale adaptée, suivi des expositions, vaccination, santé au travail'
+          },
+          'Amélioration continue de la qualité': {
+            icon: 'fas fa-clipboard-check',
+            color: '#795548',
+            subtitle: 'Indicateurs qualité, retours d\'expérience, certification, gestion des risques'
+          }
+        }
+      }
+    };
 
     // Configuration des modèles d'IA par défaut
     const defaultAiModels = [
@@ -1409,93 +2035,40 @@
       localStorage.setItem('modifiedDefaultModels', JSON.stringify(modifiedModels));
     }
 
-    // Configuration des sections pour l'analyse des risques
-    const riskSections = {
-      'Description sommaire des travaux': {
-        icon: 'fas fa-clipboard-list',
-        color: 'var(--risk-description)',
-        subtitle: 'Résumé des éléments renseignés par l\'utilisateur'
-      },
-      'Risques physiques': {
-        icon: 'fas fa-running',
-        color: 'var(--risk-physical)',
-        subtitle: 'Chutes, bruit, fatigue, accidents machines/outils/engins'
-      },
-      'Risques chimiques ou biologiques': {
-        icon: 'fas fa-flask',
-        color: 'var(--risk-chemical)',
-        subtitle: 'Amiante, plomb, poussières, solvants, gaz, moisissures, bactéries'
-      },
-      'Contraintes ergonomiques': {
-        icon: 'fas fa-user-injured',
-        color: 'var(--risk-ergonomic)',
-        subtitle: 'Mauvaises postures, tâches répétitives, charges lourdes, stress'
-      },
-      'Risques environnementaux': {
-        icon: 'fas fa-cloud-showers-heavy',
-        color: 'var(--risk-environmental)',
-        subtitle: 'Pollution, températures extrêmes, climat, réseaux EDF/GAZ'
-      },
-      'Activités des tiers': {
-        icon: 'fas fa-users',
-        color: 'var(--risk-third-party)',
-        subtitle: 'Véhicules, engins, piétons en site occupé'
-      },
-      'Organisation des travaux': {
-        icon: 'fas fa-sitemap',
-        color: 'var(--risk-organization)',
-        subtitle: 'Circulation, signalisation, procédures d\'urgence et premiers secours'
-      },
-      'Mesures de prévention': {
-        icon: 'fas fa-shield-alt',
-        color: 'var(--risk-prevention)',
-        subtitle: 'Formation, EPI, aménagement, santé, gestion des risques'
-      }
-    };
+    // Fonction pour sélectionner le secteur
+    function selectSector(sector) {
+      currentSector = sector;
+      
+      // Mettre à jour les boutons
+      document.querySelectorAll('.sector-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Mettre à jour les informations réglementaires
+      updateReglementationInfo();
+      
+      // Mettre à jour l'interface avec la couleur du secteur
+      updateSectorTheme();
+    }
 
-    // Configuration des sections pour le plan de prévention
-    const preventionSections = {
-      'Description sommaire des travaux': {
-        icon: 'fas fa-clipboard-list',
-        color: 'var(--prevention-description)',
-        subtitle: 'Résumé des éléments renseignés par l\'utilisateur'
-      },
-      'Identification des activités et des risques': {
-        icon: 'fas fa-search',
-        color: 'var(--prevention-identification)',
-        subtitle: 'Phases d\'activité dangereuses et moyens de prévention spécifiques'
-      },
-      'Matériels, installations et dispositifs': {
-        icon: 'fas fa-tools',
-        color: 'var(--prevention-materials)',
-        subtitle: 'Adaptation des matériels et conditions d\'entretien'
-      },
-      'Instructions et consignes aux travailleurs': {
-        icon: 'fas fa-user-shield',
-        color: 'var(--prevention-instructions)',
-        subtitle: 'Consignes de sécurité pour assurer la protection des travailleurs'
-      },
-      'Organisation des secours': {
-        icon: 'fas fa-first-aid',
-        color: 'var(--prevention-rescue)',
-        subtitle: 'Dispositif de premiers secours en cas d\'urgence'
-      },
-      'Coordination entre entreprises': {
-        icon: 'fas fa-handshake',
-        color: 'var(--prevention-coordination)',
-        subtitle: 'Commandement et coordination des travaux entre entreprises'
-      },
-      'Répartition des responsabilités et suivi': {
-        icon: 'fas fa-tasks',
-        color: 'var(--prevention-responsibilities)',
-        subtitle: 'Répartition des charges et suivi individuel de santé'
-      },
-      'Informations spécifiques (amiante)': {
-        icon: 'fas fa-exclamation-triangle',
-        color: 'var(--prevention-asbestos)',
-        subtitle: 'Dossiers techniques et rapports de repérage amiante'
-      }
-    };
+    // Fonction pour mettre à jour les informations réglementaires
+    function updateReglementationInfo() {
+      const sectorConfig = sectorsConfig[currentSector];
+      const regInfo = document.getElementById('reglementationInfo');
+      const regTitle = document.getElementById('regTitle');
+      const regContent = document.getElementById('regContent');
+      
+      regTitle.textContent = sectorConfig.regulations.title;
+      regContent.textContent = sectorConfig.regulations.content;
+      regInfo.classList.add('active');
+    }
+
+    // Fonction pour mettre à jour le thème selon le secteur
+    function updateSectorTheme() {
+      const sectorConfig = sectorsConfig[currentSector];
+      document.documentElement.style.setProperty('--primary', sectorConfig.color);
+    }
 
     // Fonction pour sélectionner la fonctionnalité
     function selectFunction(functionType) {
@@ -1511,12 +2084,12 @@
       const analyzeBtn = document.querySelector('.btn-analyze');
       if (functionType === 'risk') {
         analyzeBtn.innerHTML = '<i class="fas fa-search"></i> Analyser les risques';
-        document.querySelector('h1').innerHTML = '<i class="fas fa-hard-hat"></i> Analyse des Risques BTP';
-        document.querySelector('.subtitle').textContent = 'Solution professionnelle pour l\'analyse et la prévention des risques dans le bâtiment';
+        document.querySelector('h1').innerHTML = `<i class="fas fa-hard-hat"></i> Analyse des Risques - ${sectorsConfig[currentSector].name}`;
+        document.querySelector('.subtitle').textContent = `Solution professionnelle pour l'analyse détaillée et la prévention des risques dans le ${sectorsConfig[currentSector].name}`;
       } else {
         analyzeBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Générer le plan de prévention';
-        document.querySelector('h1').innerHTML = '<i class="fas fa-shield-alt"></i> Plan de Prévention BTP';
-        document.querySelector('.subtitle').textContent = 'Solution professionnelle pour l\'élaboration de plans de prévention complets';
+        document.querySelector('h1').innerHTML = `<i class="fas fa-shield-alt"></i> Plan de Prévention - ${sectorsConfig[currentSector].name}`;
+        document.querySelector('.subtitle').textContent = `Solution professionnelle pour l'élaboration de plans de prévention complets dans le ${sectorsConfig[currentSector].name}`;
       }
       
       // Réinitialiser l'affichage
@@ -2032,16 +2605,16 @@
       // ================= EN-TÊTE =================
       formattedText += '='.repeat(60) + '\n';
       if (currentFunction === 'risk') {
-        formattedText += 'ANALYSE DES RISQUES BTP - DOCUMENT PROFESSIONNEL\n';
+        formattedText += 'ANALYSE DÉTAILLÉE DES RISQUES ' + sectorsConfig[currentSector].name.toUpperCase() + ' - DOCUMENT PROFESSIONNEL\n';
       } else {
-        formattedText += 'PLAN DE PRÉVENTION BTP - DOCUMENT PROFESSIONNEL\n';
+        formattedText += 'PLAN DE PRÉVENTION DÉTAILLÉ ' + sectorsConfig[currentSector].name.toUpperCase() + ' - DOCUMENT PROFESSIONNEL\n';
       }
       formattedText += '='.repeat(60) + '\n\n';
       
       // ================= CONTENU DE L'ANALYSE =================
       const lines = text.split('\n');
       let currentSection = '';
-      const sections = currentFunction === 'risk' ? riskSections : preventionSections;
+      const sections = currentFunction === 'risk' ? sectorsConfig[currentSector].riskSections : sectorsConfig[currentSector].preventionSections;
       
       for (let line of lines) {
         const trimmedLine = line.trim();
@@ -2082,7 +2655,7 @@
       
       // ================= PIED DE PAGE =================
       formattedText += '\n\n' + '='.repeat(60) + '\n';
-      formattedText += 'MESURES DE SÉCURITÉ OBLIGATOIRES\n';
+      formattedText += 'MESURES DE SÉCURITÉ OBLIGATOIRES - ' + sectorsConfig[currentSector].name.toUpperCase() + '\n';
       formattedText += '='.repeat(60) + '\n\n';
       formattedText += '⚠️  Port des Équipements de Protection Individuelle (EPI) obligatoire\n';
       formattedText += '⚠️  Respect des procédures de sécurité en vigueur\n';
@@ -2141,7 +2714,7 @@
       let result = '';
       let currentSection = '';
       let currentContent = '';
-      const sections = currentFunction === 'risk' ? riskSections : preventionSections;
+      const sections = currentFunction === 'risk' ? sectorsConfig[currentSector].riskSections : sectorsConfig[currentSector].preventionSections;
 
       const lines = cleanText.split('\n');
       
@@ -2297,7 +2870,7 @@
       const a = document.createElement('a');
       const prefix = currentFunction === 'risk' ? 'analyse_risques' : 'plan_prevention';
       a.href = url;
-      a.download = `${prefix}_${correctedJob.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.txt`;
+      a.download = `${prefix}_${sectorsConfig[currentSector].name.replace(/\s+/g, '_')}_${correctedJob.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -2308,6 +2881,200 @@
       statusDiv.style.display = "block";
       statusDiv.innerHTML = "<i class='fas fa-check-circle'></i> Fichier texte formaté téléchargé !";
       setTimeout(() => statusDiv.style.display = "none", 2500);
+    }
+
+    // FONCTION PRINCIPALE : Export en RTF (Rich Text Format)
+    function exportAsRTF() {
+      if (!currentRawResponse) return;
+      
+      const job = document.getElementById("job").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const details = document.getElementById("details").value.trim();
+      
+      const correctedJob = applySpellingCorrections(job);
+      const correctedLocation = applySpellingCorrections(location);
+      const correctedDetails = details ? applySpellingCorrections(details) : '';
+      
+      let cleanText = cleanMarkdownSymbols(currentRawResponse);
+      
+      const rtfContent = generateRTFExport(cleanText, correctedJob, correctedLocation, correctedDetails);
+      
+      const blob = new Blob([rtfContent], { type: 'application/rtf; charset=windows-1252' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const prefix = currentFunction === 'risk' ? 'analyse_risques' : 'plan_prevention';
+      a.href = url;
+      a.download = `${prefix}_${sectorsConfig[currentSector].name.replace(/\s+/g, '_')}_${correctedJob.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0,10)}.rtf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      const statusDiv = document.getElementById("status");
+      statusDiv.className = "status success";
+      statusDiv.style.display = "block";
+      statusDiv.innerHTML = "<i class='fas fa-check-circle'></i> Document RTF formaté téléchargé !";
+      setTimeout(() => statusDiv.style.display = "none", 2500);
+    }
+
+    // Fonction pour générer le contenu RTF formaté
+    function generateRTFExport(text, job, location, details) {
+      const now = new Date();
+      const dateString = now.toLocaleDateString('fr-FR');
+      
+      const title = currentFunction === 'risk' ? 
+        `ANALYSE DÉTAILLÉE DES RISQUES ${sectorsConfig[currentSector].name.toUpperCase()}` : 
+        `PLAN DE PRÉVENTION DÉTAILLÉ ${sectorsConfig[currentSector].name.toUpperCase()}`;
+
+      // En-tête RTF avec encodage Windows-1252 pour les caractères français
+      let rtf = `{\\rtf1\\ansi\\ansicpg1252\\deff0 {\\fonttbl {\\f0 Arial;}}
+\\margl1800\\margr1800\\margt1440\\margb1440
+\\paperw11906\\paperh16838
+\\f0\\fs24
+
+\\qc\\b\\fs36 ${title}\\par
+\\qc\\b\\fs28 DOCUMENT PROFESSIONNEL\\par
+\\qc\\fs22 \\par
+\\par
+
+\\fs24\\b INFORMATIONS DU CHANTIER\\par
+\\fs20\\b0 Métier/Tâche : \\b ${escapeRTF(job)}\\b0\\par
+Lieu : \\b ${escapeRTF(location)}\\b0\\par
+Contexte : \\b ${escapeRTF(details || 'Non renseigné')}\\b0\\par
+Secteur : \\b ${escapeRTF(sectorsConfig[currentSector].name)}\\b0\\par
+Date : \\b ${escapeRTF(dateString)}\\b0\\par
+\\par
+
+\\b\\fs28 ANALYSE DÉTAILLÉE\\par
+\\fs24\\b0\\par
+`;
+
+      // Traitement du contenu
+      const lines = text.split('\n');
+      let inList = false;
+      
+      for (let line of lines) {
+        const trimmedLine = line.trim();
+        
+        if (!trimmedLine) {
+          rtf += `\\par`;
+          continue;
+        }
+        
+        if (isMainSection(trimmedLine, currentFunction === 'risk' ? sectorsConfig[currentSector].riskSections : sectorsConfig[currentSector].preventionSections)) {
+          if (inList) {
+            rtf += `\\pard\\par`;
+            inList = false;
+          }
+          rtf += `\\b\\fs26 ${escapeRTF(trimmedLine.toUpperCase())}\\par\\b0\\fs20\\par`;
+        } 
+        else if (trimmedLine.includes(':') && trimmedLine.length < 100) {
+          if (inList) {
+            rtf += `\\pard\\par`;
+            inList = false;
+          }
+          const parts = trimmedLine.split(':');
+          const title = parts[0].trim();
+          const content = parts.slice(1).join(':').trim();
+          
+          rtf += `\\b ${escapeRTF(title)} :\\b0 ${escapeRTF(content)}\\par\\par`;
+        }
+        else if (trimmedLine.startsWith('•') || trimmedLine.startsWith('-')) {
+          if (!inList) {
+            rtf += `\\pard\\fi-360\\li720 `;
+            inList = true;
+          }
+          const cleanItem = trimmedLine.replace(/^[•\-\s]*/, '');
+          rtf += `\\bullet  ${escapeRTF(cleanItem)}\\par `;
+        }
+        else {
+          if (inList) {
+            rtf += `\\pard\\par`;
+            inList = false;
+          }
+          rtf += `${escapeRTF(trimmedLine)}\\par\\par`;
+        }
+      }
+
+      if (inList) {
+        rtf += `\\pard\\par`;
+      }
+
+      // Mesures de sécurité
+      rtf += `\\par
+\\b\\fs26 MESURES DE SÉCURITÉ OBLIGATOIRES\\par
+\\b0\\fs20
+\\pard\\fi-360\\li720 
+\\bullet  Port des Équipements de Protection Individuelle (EPI) obligatoire\\par 
+\\bullet  Respect des procédures de sécurité en vigueur\\par 
+\\bullet  Signalisation appropriée du chantier\\par 
+\\bullet  Formation adaptée au personnel\\par 
+\\bullet  Surveillance continue des opérations\\par
+\\pard\\par
+`;
+
+      // Section signature pour les plans de prévention
+      if (currentFunction === 'prevention') {
+        rtf += `\\b\\fs26 VALIDATION DU PLAN DE PRÉVENTION\\par
+\\b0\\fs20
+\\b DATE DE L'INSPECTION COMMUNE PRÉALABLE :\\b0\\par
+____________________________________________________\\par
+\\par
+
+{\\fs18\\b ENTREPRISE UTILISATRICE\\par}
+{\\fs16\\b0 Nom de l'entreprise :} ______________________________\\par
+{\\fs16\\b0 Représentant :} _____________________________________\\par
+{\\fs16\\b0 Fonction :} _________________________________________\\par
+\\par
+{\\fs16 Signature :}\\par
+\\par
+\\tqr\\tx4000 __________________________________\\par
+\\qc\\fs12 (Signature et cachet)\\par
+\\ql\\par
+\\par
+
+{\\fs18\\b ENTREPRISE EXTÉRIEURE\\par}
+{\\fs16\\b0 Nom de l'entreprise :} ______________________________\\par
+{\\fs16\\b0 Représentant :} _____________________________________\\par
+{\\fs16\\b0 Fonction :} _________________________________________\\par
+\\par
+{\\fs16 Signature :}\\par
+\\par
+\\tqr\\tx4000 __________________________________\\par
+\\qc\\fs12 (Signature et cachet)\\par
+\\ql\\par
+\\par
+
+{\\fs18\\b OBSERVATIONS ÉVENTUELLES :\\b0\\par}
+____________________________________________________\\par
+____________________________________________________\\par
+____________________________________________________\\par
+\\par
+`;
+      }
+
+      // Pied de page
+      rtf += `\\par
+\\fs16 Document généré automatiquement - À conserver dans le registre de sécurité\\par
+Date de génération : ${escapeRTF(new Date().toLocaleString('fr-FR'))}\\par
+}`;
+
+      return rtf;
+    }
+
+    // Fonction utilitaire pour échapper les caractères spéciaux RTF
+    function escapeRTF(text) {
+      if (!text) return "";
+      return text
+        .replace(/\\/g, '\\\\')
+        .replace(/{/g, '\\{')
+        .replace(/}/g, '\\}')
+        .replace(/\n/g, '\\par ')
+        .replace(/\t/g, '\\tab ')
+        .replace(/\f/g, '\\page ')
+        .replace(/[\u00A0-\u00FF]/g, function(char) {
+          return '\\u' + char.charCodeAt(0) + '?';
+        });
     }
 
     async function analyzeWithAI() {
@@ -2358,62 +3125,69 @@
 
       btn.disabled = true;
       if (currentFunction === 'risk') {
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Analyse en cours…";
-        previewTitle.textContent = "Analyse des Risques";
-        previewSubtitle.textContent = "Résultat de l'analyse généré automatiquement";
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Analyse détaillée en cours…";
+        previewTitle.textContent = `Analyse Détaillée des Risques - ${sectorsConfig[currentSector].name}`;
+        previewSubtitle.textContent = "Résultat de l'analyse exhaustive généré automatiquement";
       } else {
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Génération en cours…";
-        previewTitle.textContent = "Plan de Prévention";
-        previewSubtitle.textContent = "Plan de prévention généré automatiquement";
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Génération détaillée en cours…";
+        previewTitle.textContent = `Plan de Prévention Détaillé - ${sectorsConfig[currentSector].name}`;
+        previewSubtitle.textContent = "Plan de prévention exhaustif généré automatiquement";
       }
       statusDiv.style.display = "none";
       previewDiv.style.display = "none";
       exportOptions.style.display = "none";
 
       let prompt = '';
+      const sectorConfig = sectorsConfig[currentSector];
       
       if (currentFunction === 'risk') {
-        // PROMPT pour l'analyse des risques
-        prompt = `En tant qu'expert en prévention des risques professionnels dans le BTP en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour minimiser les accidents de travail sur les chantiers.
+        // PROMPT pour l'analyse des risques adapté au secteur - VERSION DÉTAILLÉE
+        prompt = `En tant qu'expert senior en prévention des risques professionnels spécialisé dans le secteur ${sectorConfig.name} en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour minimizer les accidents de travail.
 
-Analysez les dangers liés à :
+Réalisez une analyse exhaustive et extrêmement détaillée des dangers liés à :
 
 - Tâche/métier : ${job}
 - Lieu : ${location}
-${details ? `- Contexte : ${details}` : ''}
+${details ? `- Contexte spécifique : ${details}` : ''}
 
-Structurez votre réponse en 8 parties :
-0. Description sommaire des travaux ou du travail à effectuer : Faites un résumé clair et concis des éléments renseignés (qui, quoi, où et quand)
-1. Risques physiques : chutes, bruit, fatigue, accidents liés aux machines et outils ou engins
-2. Risques chimiques ou biologiques : amiante, plomb, poussières (silice), solvants, gaz toxiques, moisissures, bactéries.
-3. Contraintes ergonomiques : mauvaises postures, tâches répétitives, levée de charges lourdes, stress.
-4. Risques environnementaux : pollution de l'air, températures extrêmes, conditions climatiques difficiles, présence de réseaux d'alimentation générale (exemple : EDF, GAZ)
-5. Activités des tiers : risques liés aux actions en site occupé (par exemple, passage de véhicules ou engins, piétons, etc.).
-6. Organisation des travaux : Circulation et accès aux zones de travail, Signalisation des risques et zones interdites, Procédures d'urgence et premiers secours.
-7. Mesures de prévention : formation à la sécurité, équipements de protection, aménagement ergonomique, suivi de la santé, gestion des risques.
+Structurez votre réponse en 8 parties détaillées adaptées au secteur ${sectorConfig.name} :
+0. Description exhaustive des travaux ou du travail à effectuer : Fournissez un résumé complet et détaillé des éléments renseignés (qui, quoi, où, quand, comment, pourquoi)
+${Object.keys(sectorConfig.riskSections).slice(1).map((section, index) => `${index + 1}. ${section} : ${sectorConfig.riskSections[section].subtitle}`).join('\n')}
 
-Utilisez des listes à puces, un langage clair, professionnel, en français. Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.`;
+EXIGENCES SPÉCIFIQUES :
+• Fournissez une analyse extrêmement détaillée et exhaustive
+• Mentionnez les réglementations spécifiques applicables
+• Incluez des exemples concrets et des cas pratiques
+• Développez chaque point avec précision et exhaustivité
+• Structurez avec des sous-sections détaillées
+• Utilisez un langage technique professionnel adapté au secteur
+• Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.
+
+Tenez compte des spécificités techniques, réglementaires et organisationnelles du secteur ${sectorConfig.name}.`;
       } else {
-        // PROMPT pour le plan de prévention
-        prompt = `En tant qu'expert en prévention des risques professionnels dans le BTP en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour élaborer des plans de prévention complets.
+        // PROMPT pour le plan de prévention adapté au secteur - VERSION DÉTAILLÉE
+        prompt = `En tant qu'expert senior en prévention des risques professionnels spécialisé dans le secteur ${sectorConfig.name} en France, vous maîtrisez parfaitement les réglementations en vigueur, les normes de sécurité, ainsi que les procédures à suivre pour élaborer des plans de prévention complets.
 
-Élaborez un plan de prévention détaillé pour :
+Élaborez un plan de prévention exhaustif et extrêmement détaillée pour :
 
 - Tâche/métier : ${job}
 - Lieu : ${location}
-${details ? `- Contexte : ${details}` : ''}
+${details ? `- Contexte spécifique : ${details}` : ''}
 
-Structurez votre réponse en 8 parties :
-0. Description sommaire des travaux ou du travail à effectuer : Faites un résumé clair et concis des éléments renseignés (qui, quoi, où et quand)
-1. Identification des activités et des risques : Définition des phases d'activité dangereuses, Moyens de prévention spécifiques correspondants à chaque phase
-2. Matériels, installations et dispositifs : Adaptation des matériels, installations et dispositifs à la nature des opérations à réaliser, Définition des conditions d'entretien de ces matériels et installations
-3. Instructions et consignes aux travailleurs : Instructions à donner aux travailleurs pour assurer leur sécurité
-4. Organisation des secours : Organisation mise en place pour assurer les premiers secours en cas d'urgence, Description du dispositif de secours mis en place par l'entreprise utilisatrice
-5. Coordination entre entreprises : Conditions de participation des travailleurs d'une entreprise aux travaux réalisés par une autre, Organisation nécessaire au maintien de la sécurité, notamment le commandement et la coordination des travaux
-6. Répartition des responsabilités et suivi : Répartition des charges d'entretien entre les entreprises extérieures, Liste des postes occupés par des travailleurs nécessitant un suivi individuel renforcé de leur état de santé
-7. Informations spécifiques (amiante) : Dossiers techniques relatifs à la recherche et à l'identification des matériaux contenant de l'amiante, Rapport de repérage de l'amiante le cas échéant
+Structurez votre réponse en 8 parties détaillées adaptées au secteur ${sectorConfig.name} :
+0. Description exhaustive des travaux ou du travail à effectuer : Fournissez un résumé complet et détaillé des éléments renseignés (qui, quoi, où, quand, comment, pourquoi)
+${Object.keys(sectorConfig.preventionSections).slice(1).map((section, index) => `${index + 1}. ${section} : ${sectorConfig.preventionSections[section].subtitle}`).join('\n')}
 
-Utilisez des listes à puces, un langage clair, professionnel, en français. Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.`;
+EXIGENCES SPÉCIFIQUES :
+• Fournissez un plan extrêmement détaillé et exhaustif
+• Mentionnez les réglementations spécifiques applicables
+• Incluez des procédures opérationnelles détaillées
+• Développez chaque point avec précision et exhaustivité
+• Structurez avec des sous-sections détaillées
+• Utilisez un langage technique professionnel adapté au secteur
+• Évitez d'utiliser des symboles de formatage markdown comme *, **, #, etc.
+
+Tenez compte des spécificités techniques, réglementaires et organisationnelles du secteur ${sectorConfig.name}.`;
       }
 
       try {
@@ -2428,7 +3202,8 @@ Utilisez des listes à puces, un langage clair, professionnel, en français. Év
           body: JSON.stringify({
             model: model,
             messages: [{ role: "user", content: prompt }],
-            temperature: 0.4
+            temperature: 0.3,
+            max_tokens: 4000
           })
         });
 
@@ -2445,8 +3220,8 @@ Utilisez des listes à puces, un langage clair, professionnel, en français. Év
         statusDiv.className = "status success";
         statusDiv.style.display = "block";
         const successMessage = currentFunction === 'risk' ? 
-          "Analyse terminée. Vous pouvez exporter le résultat." : 
-          "Plan de prévention généré. Vous pouvez exporter le résultat.";
+          "Analyse détaillée terminée. Vous pouvez exporter le résultat." : 
+          "Plan de prévention détaillé généré. Vous pouvez exporter le résultat.";
         statusDiv.innerHTML = `<i class='fas fa-check-circle'></i> ${successMessage}`;
       } catch (error) {
         console.error("Erreur :", error);
@@ -2469,6 +3244,7 @@ Utilisez des listes à puces, un langage clair, professionnel, en français. Év
       updateCurrentModelDisplay();
       loadApiKey();
       checkApiKeyStatus();
+      updateReglementationInfo();
       
       // Initialiser le compteur de caractères pour l'API Key
       const apiKeyInput = document.getElementById('apiKeyInput');
